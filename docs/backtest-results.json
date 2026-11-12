@@ -1,0 +1,180 @@
+{
+  "generatedAt": "2026-11-12T18:34:23.579Z",
+  "gameweeks": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "sample": 1338,
+  "model": {
+    "mae": 2.3,
+    "rmse": 2.99,
+    "bias": 0.05
+  },
+  "baseline": {
+    "mae": 2.57,
+    "rmse": 3.28,
+    "bias": 0.62
+  },
+  "captain": {
+    "modelAvgPoints": 5.33,
+    "baselineAvgPoints": 2.67,
+    "bestPossibleAvg": 15.83,
+    "hitRate": 0.83
+  },
+  "squad": {
+    "modelAvg": 52,
+    "baselineAvg": 45.5,
+    "modelPredictedAvg": 56.34
+  },
+  "perGw": [
+    {
+      "gw": 5,
+      "players": 159,
+      "modelMae": 2.61,
+      "baselineMae": 2.94,
+      "captainModel": {
+        "name": "Haaland",
+        "points": 6
+      },
+      "captainBaseline": {
+        "name": "Bogle",
+        "points": 5
+      },
+      "captainBestPossible": 17,
+      "squadModel": {
+        "predicted": 59.36,
+        "actual": 54
+      },
+      "squadBaseline": {
+        "predicted": 112.5,
+        "actual": 51
+      }
+    },
+    {
+      "gw": 6,
+      "players": 195,
+      "modelMae": 2.27,
+      "baselineMae": 2.53,
+      "captainModel": {
+        "name": "Isak",
+        "points": 0
+      },
+      "captainBaseline": {
+        "name": "Groß",
+        "points": 6
+      },
+      "captainBestPossible": 15,
+      "squadModel": {
+        "predicted": 55.3,
+        "actual": 30
+      },
+      "squadBaseline": {
+        "predicted": 111.05,
+        "actual": 55
+      }
+    },
+    {
+      "gw": 7,
+      "players": 219,
+      "modelMae": 2.42,
+      "baselineMae": 2.81,
+      "captainModel": {
+        "name": "Haaland",
+        "points": 13
+      },
+      "captainBaseline": {
+        "name": "João Pedro",
+        "points": 2
+      },
+      "captainBestPossible": 15,
+      "squadModel": {
+        "predicted": 58.84,
+        "actual": 64
+      },
+      "squadBaseline": {
+        "predicted": 111.17,
+        "actual": 46
+      }
+    },
+    {
+      "gw": 8,
+      "players": 240,
+      "modelMae": 2.44,
+      "baselineMae": 2.68,
+      "captainModel": {
+        "name": "Haaland",
+        "points": 8
+      },
+      "captainBaseline": {
+        "name": "De Cuyper",
+        "points": 1
+      },
+      "captainBestPossible": 17,
+      "squadModel": {
+        "predicted": 53.66,
+        "actual": 42
+      },
+      "squadBaseline": {
+        "predicted": 96.9,
+        "actual": 24
+      }
+    },
+    {
+      "gw": 9,
+      "players": 254,
+      "modelMae": 2.11,
+      "baselineMae": 2.36,
+      "captainModel": {
+        "name": "Haaland",
+        "points": 2
+      },
+      "captainBaseline": {
+        "name": "Haaland",
+        "points": 2
+      },
+      "captainBestPossible": 15,
+      "squadModel": {
+        "predicted": 54.03,
+        "actual": 49
+      },
+      "squadBaseline": {
+        "predicted": 85.66,
+        "actual": 33
+      }
+    },
+    {
+      "gw": 10,
+      "players": 271,
+      "modelMae": 2.09,
+      "baselineMae": 2.29,
+      "captainModel": {
+        "name": "Tavernier",
+        "points": 3
+      },
+      "captainBaseline": {
+        "name": "João Pedro",
+        "points": 0
+      },
+      "captainBestPossible": 16,
+      "squadModel": {
+        "predicted": 56.85,
+        "actual": 73
+      },
+      "squadBaseline": {
+        "predicted": 81.78,
+        "actual": 64
+      }
+    }
+  ],
+  "notes": [
+    "Point-in-time: features use only rounds before the target gameweek; prices are the price after the previous gameweek.",
+    "Availability news is not point-in-time in the public API, so all players are treated as available for both model and baseline.",
+    "Error metrics cover players with >= 270 prior minutes and a fixture in the gameweek.",
+    "Baseline = season points-per-game x number of fixtures; baseline squad is optimised on the same constraints.",
+    "Squad points use actual points of the chosen XI + captain x2, without automatic substitutions."
+  ]
+}

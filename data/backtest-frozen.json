@@ -1,0 +1,49 @@
+{
+  "frozenAt": "2026-11-12T20:09:06.010Z",
+  "note": "Strategy code and parameters at the moment the held-out evaluation was first run. No parameter was tuned.",
+  "config": {
+    "balancedPlusParameters": {
+      "name": "Balanced Plus",
+      "maxPerClubXI": 2,
+      "xiMinStartProb": 0.75,
+      "xiMinExpMinutes": 60,
+      "xiMinAvailability": 0.9,
+      "benchMinStartProb": 0.5,
+      "minAvailability": 0.75,
+      "benchWeight": 0.25,
+      "benchTargets": [
+        12,
+        11,
+        10,
+        9,
+        8,
+        6,
+        0
+      ],
+      "viceMinStartProb": 0.85,
+      "viceMinAvailability": 0.9
+    },
+    "horizonWeights": [
+      1,
+      0.9,
+      0.8,
+      0.7,
+      0.6
+    ],
+    "windowLength": 5,
+    "squadBudgetTenths": 1000,
+    "sourceHashes": {
+      "lib/analytics/consistency.ts": "6d6bdbf7eae0ef5175e40f7785f83350d0b4391259f867a52dbe5828f6628b1a",
+      "lib/analytics/expectedPoints.ts": "f2a934c95b1463a3e112cbef9bce33999eb8433fdb24fbf0c0c7856fce4bed61",
+      "lib/analytics/fixtureAnalysis.ts": "7f96b612a131c7409efd5a017b1f2195a1ebacc1949da8bb7d0d6daeb859c8f8",
+      "lib/analytics/playerScoring.ts": "29e28c0a71f9f1eb78d26a377c05bba1e4684e9e2867f3e0c6dabcba090b008f",
+      "lib/optimizer/alternatives.ts": "b48a920f766c4ab562c505f6995c4efbae5ac327d00cf617851d0e6fb4068630",
+      "lib/optimizer/captainSelector.ts": "23184f3d875f4306326a38bc35bceefb5fed7e705500375f7ca3d99837fbc938",
+      "lib/optimizer/formationOptimizer.ts": "831fb9bc0a08f9d3b8b6be448168170392174382c4d4ec28f2f8e4fcd8fc068e",
+      "lib/optimizer/lp-solver.d.ts": "1640c44eabede2a91c1444e097d8435b110c0397f9b3157d31360130b56df55b",
+      "lib/optimizer/squadOptimizer.ts": "eddb7dd5a6e66adda655009f89c0f7d7640d246eb5dbee7737d5b9765ae490c9",
+      "lib/optimizer/validation.ts": "f586a82f905d48b2b38dd71869093b0bf3a777b42b43d4b98d00babb543d6c36",
+      "lib/strategies/balancedPlus.ts": "fa462b714d4cbf919ecbfaf8e3f8de80b35991967f4758d0a2139f5b7ffebe75"
+    }
+  }
+}

@@ -1,0 +1,641 @@
+openapi: 3.0.3
+info:
+  title: FPL Intelligence API
+  version: 1.0.0
+  description: |
+    Backend-for-frontend over the unofficial Fantasy Premier League API. Normalises FPL data, projects expected
+    points per player per gameweek, and optimises squads. All responses are JSON unless noted. FPL data is cached
+    for ~15 minutes; every data response carries `fetchedAt`, `source` and `stale`.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/bootstrap:
+    get:
+      summary: Season metadata
+      description: Gameweeks, teams, official squad rules and scoring table, current/next gameweek and data freshness.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Bootstrap" }
+  /api/fixtures:
+    get:
+      summary: Fixtures for one gameweek
+      parameters:
+        - { name: event, in: query, schema: { type: integer }, description: Gameweek id. Defaults to the next gameweek. }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FixturesResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/gameweek/{id}:
+    get:
+      summary: Gameweek details, deadline and fixtures with difficulty
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GameweekResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/players:
+    get:
+      summary: Searchable player explorer with projections
+      parameters:
+        - { name: gw, in: query, schema: { type: integer } }
+        - { name: q, in: query, schema: { type: string }, description: Name search (case-insensitive substring). }
+        - { name: pos, in: query, schema: { type: string, enum: [GKP, DEF, MID, FWD] } }
+        - { name: team, in: query, schema: { type: integer } }
+        - { name: ids, in: query, schema: { type: string }, description: Comma-separated player ids. }
+        - { name: sort, in: query, schema: { type: string, enum: [ep, goals, assists, xG, xA, minutes, form, cost, ownership, totalPoints], default: ep } }
+        - { name: dir, in: query, schema: { type: string, enum: [asc, desc], default: desc } }
+        - { name: limit, in: query, schema: { type: integer, default: 100, maximum: 800 } }
+        - { name: offset, in: query, schema: { type: integer, default: 0 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gw: { type: integer }
+                  total: { type: integer }
+                  players:
+                    type: array
+                    items: { $ref: "#/components/schemas/PlayerView" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/player/{id}:
+    get:
+      summary: Player profile
+      description: Projection and explanation, last gameweeks, consistency (from FPL element-summary), and projected points for the next 6 gameweeks.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: integer } }
+        - { name: gw, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PlayerProfile" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /api/optimize:
+    post:
+      summary: Generate the optimal squad for a gameweek
+      description: Deterministic integer-linear-programming optimiser. Never returns an invalid squad; returns 422 if the constraints are infeasible.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OptimizeRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SquadResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/evaluate:
+    post:
+      summary: Recalculate a user-edited squad
+      description: Validates a 15-player squad against FPL rules, then recomputes formation, XI, bench, captain and expected points.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - { $ref: "#/components/schemas/OptimizeRequest" }
+                - type: object
+                  required: [squad]
+                  properties:
+                    squad: { type: array, items: { type: integer }, minItems: 15, maxItems: 15 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SquadResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/alternatives:
+    post:
+      summary: Legal replacements for one squad member
+      description: Same-position players that keep the squad within budget and the 3-per-club limit, with the resulting change in squad expected points.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - { $ref: "#/components/schemas/OptimizeRequest" }
+                - type: object
+                  required: [squad, playerId]
+                  properties:
+                    squad: { type: array, items: { type: integer }, minItems: 15, maxItems: 15 }
+                    playerId: { type: integer, description: Player in the squad to replace. }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlternativesResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/import/{teamId}:
+    get:
+      summary: Import an FPL team by ID (public endpoints only, no login)
+      description: |
+        Reads `entry`, `history`, `transfers` and `picks` from the public FPL API and rebuilds a season state:
+        squad with purchase prices (opening prices + transfer replay, Free Hit weeks ignored), bank, chips used,
+        captain, per-gameweek results. Free transfers are DERIVED (the API does not expose them) and listed in `derived`.
+        No password is ever requested.
+      parameters:
+        - { name: teamId, in: path, required: true, schema: { type: integer } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ImportResponse" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /api/season/evaluate:
+    post:
+      summary: BASE vs PROPOSED squad for a gameweek
+      description: Rolls the actual squad forward to `gw` through earlier plans, applies that gameweek's plan with the deterministic rules engine (selling prices, bank, free transfers, club limit, chips) and returns both squads. Never modifies the supplied actual squad. Illegal plans are reported in `plan.errors` (HTTP 200).
+      requestBody: { $ref: "#/components/requestBodies/Season" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/season/transfers:
+    post:
+      summary: Transfer recommendations and save-vs-use decision
+      description: Options for 0-4 transfers, the recommended action (`save`, `transfer`, `hit`), and up to five alternatives for every squad player. Net gain = discounted 5-GW expected points gain minus 4 per transfer beyond the free allowance.
+      requestBody: { $ref: "#/components/requestBodies/Season" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/TransferAnalysis" } } } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/season/chips:
+    post:
+      summary: Chip strategy
+      description: Use-or-save advice for each chip still available in the current half (gain by gameweek, doubles/blanks, expiry).
+      requestBody: { $ref: "#/components/requestBodies/Season" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+  /api/season/alternatives:
+    post:
+      summary: Replacement candidates in the proposed squad
+      description: Legal swaps using real selling prices and the bank, with the change in expected points and any extra -4 hit.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - { $ref: "#/components/schemas/SeasonRequest" }
+                - { type: object, required: [playerId], properties: { playerId: { type: integer } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/season/freehit:
+    post:
+      summary: Best temporary Free Hit squad
+      description: Budget is selling prices plus bank. 422 if Free Hit is not legal this gameweek.
+      requestBody: { $ref: "#/components/requestBodies/Season" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/season/wildcard:
+    post:
+      summary: Best permanent Wildcard rebuild
+      description: Optimised over the next five gameweeks, returned as a list of transfers.
+      requestBody: { $ref: "#/components/requestBodies/Season" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/season/commit:
+    post:
+      summary: Lock in a gameweek
+      description: Returns the new ACTUAL squad for gw+1 (Free Hit reverted, free transfers rolled, chip recorded) and a snapshot containing the pre-deadline prediction. The server stores nothing; the client persists the result.
+      requestBody: { $ref: "#/components/requestBodies/Season" }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/backtest:
+    get:
+      summary: Latest backtest summary
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /api/report:
+    post:
+      summary: Gameweek Intelligence Report (PDF)
+      description: |
+        Builds a landscape A4 PDF for the squad EXACTLY as supplied (starting XI, bench, captain, vice). The server
+        validates the squad and lineup against FPL rules but never regenerates it. For `my-team` it re-evaluates the
+        supplied season with the same engine as the screen and returns 409 if the displayed squad no longer matches.
+        The PDF has selectable text, document metadata, a printed JSON copy of all data between
+        `=== BEGIN STRUCTURED DATA ...` and `=== END STRUCTURED DATA ===` markers, and the same JSON attached as
+        `fpl-gw{N}-report.json` (schema `fpl-gw-report/1`).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReportRequest" }
+      responses:
+        "200":
+          description: PDF. Header `x-report-squad` lists the 15 player ids (XI then bench) that the report describes.
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { description: The squad on screen no longer matches the current plan (my-team only), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+        "422": { $ref: "#/components/responses/Unprocessable" }
+  /api/strategies/balanced-plus:
+    get:
+      summary: Balanced Plus strategy squad and comparison
+      description: |
+        The fourth optimisation strategy (max 2 players per club in the XI, secure starters, five-gameweek xG/xA-based value,
+        no form tilt, strong bench, independent captaincy), plus a comparison with Balanced, Safe and Aggressive computed
+        from the same data snapshot and £100m budget. Every changed player has an explanation.
+      parameters:
+        - { name: gw, in: query, schema: { type: integer }, description: Defaults to the next gameweek. }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/strategies/balanced-plus/report:
+    get:
+      summary: Balanced Plus Gameweek Intelligence Report (PDF)
+      description: Same format as the standard report (selectable text, attached and printed JSON) plus a strategy definition and a comparison appendix against the three existing strategies.
+      parameters:
+        - { name: gw, in: query, schema: { type: integer } }
+      responses:
+        "200":
+          description: PDF
+          content:
+            application/pdf:
+              schema: { type: string, format: binary }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/share-image:
+    get:
+      summary: Shareable squad graphic
+      description: 1200x630 PNG for a squad encoded with the share-link format (`d` query parameter, base64url).
+      parameters:
+        - { name: d, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: PNG image
+          content:
+            image/png:
+              schema: { type: string, format: binary }
+        "400": { description: Invalid payload }
+        "422": { description: Squad is not valid }
+  /api/openapi:
+    get:
+      summary: This specification (YAML)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/yaml:
+              schema: { type: string }
+components:
+  requestBodies:
+    Season:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/SeasonRequest" }
+  responses:
+    BadRequest:
+      description: Invalid input
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unprocessable:
+      description: Valid input but no legal result (infeasible constraints or illegal squad)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+  schemas:
+    ReportRequest:
+      type: object
+      required: [kind, starting, bench, captain, vice]
+      properties:
+        kind: { type: string, enum: [builder, my-team] }
+        gw: { type: integer }
+        starting: { type: array, items: { type: integer }, minItems: 11, maxItems: 11, description: Starting XI in display order. }
+        bench: { type: array, items: { type: integer }, minItems: 4, maxItems: 4, description: Bench in substitution order. }
+        captain: { type: integer }
+        vice: { type: integer }
+        mode: { type: string, enum: [balanced, safe, aggressive], description: builder only }
+        budget: { type: number, description: builder only; £m }
+        originalIds: { type: array, items: { type: integer }, description: builder only; the generated squad, to list manual edits }
+        season: { type: object, description: my-team only; same shape as SeasonRequest.season, additionalProperties: true }
+        teamName: { type: string }
+        ftDerived: { type: boolean, description: my-team only; marks free transfers as derived }
+    Holding:
+      type: object
+      required: [id, buyTenths]
+      properties:
+        id: { type: integer }
+        buyTenths: { type: integer, description: Price paid in tenths of £m (needed for selling price). }
+    SeasonSquad:
+      type: object
+      required: [gw, holdings, bankTenths, freeTransfers]
+      properties:
+        gw: { type: integer, description: Gameweek this squad is for. }
+        holdings: { type: array, items: { $ref: "#/components/schemas/Holding" }, minItems: 15, maxItems: 15 }
+        bankTenths: { type: integer }
+        freeTransfers: { type: integer, minimum: 0, maximum: 5 }
+        chipsUsed:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string, enum: [wildcard, freehit, bboost, 3xc] }
+              event: { type: integer }
+        captain: { type: integer }
+        vice: { type: integer }
+    GwPlan:
+      type: object
+      description: PROPOSED changes for one gameweek.
+      properties:
+        transfers:
+          type: array
+          items:
+            type: object
+            properties:
+              out: { type: integer }
+              in: { type: integer }
+        chip: { type: string, nullable: true, enum: [wildcard, freehit, bboost, 3xc] }
+        freeHitIds: { type: array, items: { type: integer }, description: Temporary Free Hit squad (15 ids). }
+    SeasonRequest:
+      type: object
+      required: [season]
+      properties:
+        gw: { type: integer, description: Defaults to season.actual.gw. Cannot be earlier than the actual squad's gameweek. }
+        season:
+          type: object
+          required: [actual]
+          properties:
+            source: { type: string }
+            actual: { $ref: "#/components/schemas/SeasonSquad" }
+            plans:
+              type: object
+              description: Map of gameweek id to plan.
+              additionalProperties: { $ref: "#/components/schemas/GwPlan" }
+    TransferAnalysis:
+      type: object
+      properties:
+        gw: { type: integer }
+        horizonGws: { type: array, items: { type: integer } }
+        freeTransfers: { type: integer }
+        bankTenths: { type: integer }
+        action: { type: string, enum: [save, transfer, hit] }
+        headline: { type: string }
+        reason: { type: string }
+        recommendedN: { type: integer }
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              n: { type: integer }
+              label: { type: string }
+              hitCost: { type: integer }
+              ftAfter: { type: integer }
+              gainGw: { type: number }
+              gainHorizon: { type: number }
+              net: { type: number }
+              score: { type: number }
+              transfers: { type: array, items: { type: object, additionalProperties: true } }
+        sellCandidates: { type: array, items: { type: object, additionalProperties: true } }
+        players: { type: object, additionalProperties: true }
+    ImportResponse:
+      type: object
+      properties:
+        state: { type: object, additionalProperties: true, description: SeasonState ready to persist. }
+        entry:
+          type: object
+          properties:
+            id: { type: integer }
+            name: { type: string }
+            manager: { type: string }
+        derived: { type: array, items: { type: string }, description: Fields computed rather than read from FPL. }
+        available:
+          type: object
+          description: Which fields came from the API, `derived`, or are missing.
+          additionalProperties: true
+        queuedTransfers: { type: integer }
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    Freshness:
+      type: object
+      properties:
+        fetchedAt: { type: string, format: date-time, description: Last successful upstream fetch. }
+        source: { type: string, enum: [live, cache, sample] }
+        stale: { type: boolean, description: True if the latest refresh failed and older data is served. }
+    Position:
+      type: string
+      enum: [GKP, DEF, MID, FWD]
+    GameweekInfo:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        deadline: { type: string, format: date-time }
+        finished: { type: boolean }
+        isCurrent: { type: boolean }
+        isNext: { type: boolean }
+    Bootstrap:
+      allOf:
+        - { $ref: "#/components/schemas/Freshness" }
+        - type: object
+          properties:
+            currentGw: { type: integer, nullable: true }
+            nextGw: { type: integer }
+            events:
+              type: array
+              items: { $ref: "#/components/schemas/GameweekInfo" }
+            teams:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: integer }
+                  name: { type: string }
+                  short: { type: string }
+                  badgeUrl: { type: string }
+                  played: { type: integer }
+            rules: { type: object, additionalProperties: true }
+            scoring: { type: object, additionalProperties: true }
+            playerCount: { type: integer }
+    FixtureSide:
+      type: object
+      properties:
+        id: { type: integer }
+        short: { type: string }
+        name: { type: string }
+        difficulty: { type: integer, minimum: 1, maximum: 5, description: FPL fixture difficulty rating for this side. }
+    FixturesResponse:
+      allOf:
+        - { $ref: "#/components/schemas/Freshness" }
+        - type: object
+          properties:
+            gw: { type: integer }
+            fixtures:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: { type: integer }
+                  kickoff: { type: string, format: date-time, nullable: true }
+                  home: { $ref: "#/components/schemas/FixtureSide" }
+                  away: { $ref: "#/components/schemas/FixtureSide" }
+                  finished: { type: boolean }
+                  score:
+                    nullable: true
+                    type: object
+                    properties:
+                      home: { type: integer }
+                      away: { type: integer }
+    GameweekResponse:
+      allOf:
+        - { $ref: "#/components/schemas/GameweekInfo" }
+        - { $ref: "#/components/schemas/Freshness" }
+        - type: object
+          properties:
+            fixtures: { type: array, items: { type: object, additionalProperties: true } }
+            blankTeams: { type: array, items: { type: string } }
+    FixtureInfo:
+      type: object
+      properties:
+        fixtureId: { type: integer }
+        oppId: { type: integer }
+        oppShort: { type: string }
+        home: { type: boolean }
+        difficulty: { type: integer }
+        kickoff: { type: string, nullable: true }
+    PlayerView:
+      type: object
+      description: Player record plus the model's projection for the requested gameweek.
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        fullName: { type: string }
+        team: { type: string }
+        teamName: { type: string }
+        pos: { $ref: "#/components/schemas/Position" }
+        cost: { type: number, description: Price in £m. }
+        photoUrl: { type: string }
+        status: { type: string, description: "FPL status: a=available, d=doubtful, i=injured, s=suspended, u=unavailable, n=not in squad." }
+        news: { type: string }
+        ownership: { type: number }
+        form: { type: number }
+        totalPoints: { type: integer }
+        minutes: { type: integer }
+        goals: { type: integer }
+        assists: { type: integer }
+        xG: { type: number }
+        xA: { type: number }
+        xGI: { type: number }
+        ep: { type: number, description: Expected FPL points for the gameweek (sum over fixtures; blank GW = 0). }
+        score: { type: number, description: Mode-adjusted value the optimiser maximises. Not a points forecast. }
+        confidence: { type: string, enum: [high, medium, low] }
+        confidenceScore: { type: number, minimum: 0, maximum: 1 }
+        startProb: { type: number }
+        availability: { type: number }
+        expMinutes: { type: integer }
+        fixtures: { type: array, items: { $ref: "#/components/schemas/FixtureInfo" } }
+        components:
+          type: object
+          description: Breakdown of ep by scoring event.
+          additionalProperties: { type: number }
+        warnings: { type: array, items: { type: string } }
+        reasons: { type: array, items: { type: string } }
+    PlayerProfile:
+      type: object
+      properties:
+        gw: { type: integer }
+        player: { $ref: "#/components/schemas/PlayerView" }
+        recent: { type: array, items: { type: object, additionalProperties: true } }
+        consistency:
+          type: object
+          properties:
+            games: { type: integer }
+            returnRate: { type: number }
+            haulShare: { type: number }
+            minutesStability: { type: number }
+            label: { type: string, enum: [consistent, streaky, hauls, n/a] }
+        upcoming:
+          type: array
+          items:
+            type: object
+            properties:
+              gw: { type: integer }
+              ep: { type: number }
+              fixtures: { type: array, items: { $ref: "#/components/schemas/FixtureInfo" } }
+        historyAvailable: { type: boolean }
+    OptimizeRequest:
+      type: object
+      properties:
+        gw: { type: integer, description: Defaults to the next gameweek. }
+        mode: { type: string, enum: [balanced, safe, aggressive], default: balanced }
+        budget: { type: number, minimum: 30, maximum: 200, description: "£m; clamped to the official budget (100)." }
+        formation: { type: string, example: 3-4-3, description: Preferred outfield formation. Must be legal. }
+        differential: { type: number, minimum: 0, maximum: 1, description: Preference for low-ownership players. }
+        maxOwnership: { type: number, exclusiveMinimum: true, minimum: 0, maximum: 100 }
+        favourFixtureRuns: { type: boolean, description: Blend the next two gameweeks into the selection score. }
+    SquadResponse:
+      allOf:
+        - { $ref: "#/components/schemas/Freshness" }
+        - type: object
+          properties:
+            gw: { type: integer }
+            method: { type: string, enum: [ilp, greedy-fallback] }
+            solveMs: { type: integer }
+            formation: { type: string, example: 4-3-3 }
+            captain: { type: integer }
+            viceCaptain: { type: integer }
+            starting: { type: array, items: { $ref: "#/components/schemas/PlayerView" }, minItems: 11, maxItems: 11 }
+            bench: { type: array, items: { $ref: "#/components/schemas/PlayerView" }, minItems: 4, maxItems: 4, description: "Ordered: substitute keeper first." }
+            squadIds: { type: array, items: { type: integer } }
+            totalCost: { type: number }
+            remaining: { type: number }
+            expectedPoints: { type: number, description: Sum of the XI's expected points plus the captain's extra points. }
+    AlternativesResponse:
+      type: object
+      properties:
+        gw: { type: integer }
+        playerId: { type: integer }
+        current:
+          type: object
+          additionalProperties: true
+        alternatives:
+          type: array
+          items:
+            type: object
+            properties:
+              playerId: { type: integer }
+              ep: { type: number }
+              deltaEp: { type: number, description: Squad expected points after swap minus before. }
+              deltaCostTenths: { type: integer }
+              remainingTenths: { type: integer }
+              player: { $ref: "#/components/schemas/PlayerView" }

@@ -1,0 +1,126 @@
+[
+ {
+  "id": "balanced",
+  "label": "Balanced",
+  "meanWindowPoints": 291.655,
+  "pointsPerGw": 58.331,
+  "captainPerGw": 8.024,
+  "squadMAEPerGw": 12.953,
+  "biasPerGw": -3.946,
+  "meanMaxClubInXI": 2.624,
+  "sharedWinPct": 25.575,
+  "averageRank": 2.353,
+  "vsBalanced": null
+ },
+ {
+  "id": "safe",
+  "label": "Safe",
+  "meanWindowPoints": 289.017,
+  "pointsPerGw": 57.803,
+  "captainPerGw": 7.948,
+  "squadMAEPerGw": 12.74,
+  "biasPerGw": -3.489,
+  "meanMaxClubInXI": 2.603,
+  "sharedWinPct": 10.92,
+  "averageRank": 2.681,
+  "vsBalanced": {
+   "vs": "balanced",
+   "nWindows": 58,
+   "nNonOverlapping": 12,
+   "meanDiff": -2.638,
+   "medianDiff": -1.5,
+   "sdDiff": 15.352,
+   "varianceDiff": 235.674,
+   "tCI95NonOverlapping": [
+    -17.036,
+    1.369
+   ],
+   "blockBootstrapCI95": [
+    -6.241,
+    1.707
+   ],
+   "signTest": {
+    "wins": 4,
+    "losses": 8,
+    "ties": 0,
+    "p": 0.3876953125
+   },
+   "effectSize": -0.172,
+   "evidence": "no-evidence-of-difference"
+  }
+ },
+ {
+  "id": "aggressive",
+  "label": "Aggressive",
+  "meanWindowPoints": 290.431,
+  "pointsPerGw": 58.086,
+  "captainPerGw": 7.848,
+  "squadMAEPerGw": 12.824,
+  "biasPerGw": -4.82,
+  "meanMaxClubInXI": 2.672,
+  "sharedWinPct": 25,
+  "averageRank": 2.629,
+  "vsBalanced": {
+   "vs": "balanced",
+   "nWindows": 58,
+   "nNonOverlapping": 12,
+   "meanDiff": -1.224,
+   "medianDiff": -3.5,
+   "sdDiff": 23.291,
+   "varianceDiff": 542.458,
+   "tCI95NonOverlapping": [
+    -6.436,
+    19.269
+   ],
+   "blockBootstrapCI95": [
+    -6.672,
+    6.379
+   ],
+   "signTest": {
+    "wins": 7,
+    "losses": 4,
+    "ties": 1,
+    "p": 0.548828125
+   },
+   "effectSize": -0.053,
+   "evidence": "no-evidence-of-difference"
+  }
+ },
+ {
+  "id": "balanced-plus",
+  "label": "Balanced Plus",
+  "meanWindowPoints": 297.276,
+  "pointsPerGw": 59.455,
+  "captainPerGw": 8.266,
+  "squadMAEPerGw": 13.475,
+  "biasPerGw": -4.857,
+  "meanMaxClubInXI": 1.986,
+  "sharedWinPct": 38.506,
+  "averageRank": 2.336,
+  "vsBalanced": {
+   "vs": "balanced",
+   "nWindows": 58,
+   "nNonOverlapping": 12,
+   "meanDiff": 5.621,
+   "medianDiff": -1.5,
+   "sdDiff": 33.599,
+   "varianceDiff": 1128.871,
+   "tCI95NonOverlapping": [
+    -19.678,
+    26.011
+   ],
+   "blockBootstrapCI95": [
+    -2.138,
+    15.328
+   ],
+   "signTest": {
+    "wins": 7,
+    "losses": 5,
+    "ties": 0,
+    "p": 0.7744140625
+   },
+   "effectSize": 0.167,
+   "evidence": "no-evidence-of-difference"
+  }
+ }
+]

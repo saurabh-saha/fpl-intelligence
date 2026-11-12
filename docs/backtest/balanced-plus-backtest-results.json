@@ -1,0 +1,4735 @@
+{
+ "generatedAt": "2026-11-12T20:32:40.743Z",
+ "frozen": {
+  "at": "2026-11-12T20:09:06.010Z",
+  "sourceHashes": {
+   "lib/analytics/consistency.ts": "6d6bdbf7eae0ef5175e40f7785f83350d0b4391259f867a52dbe5828f6628b1a",
+   "lib/analytics/expectedPoints.ts": "f2a934c95b1463a3e112cbef9bce33999eb8433fdb24fbf0c0c7856fce4bed61",
+   "lib/analytics/fixtureAnalysis.ts": "7f96b612a131c7409efd5a017b1f2195a1ebacc1949da8bb7d0d6daeb859c8f8",
+   "lib/analytics/playerScoring.ts": "29e28c0a71f9f1eb78d26a377c05bba1e4684e9e2867f3e0c6dabcba090b008f",
+   "lib/optimizer/alternatives.ts": "b48a920f766c4ab562c505f6995c4efbae5ac327d00cf617851d0e6fb4068630",
+   "lib/optimizer/captainSelector.ts": "23184f3d875f4306326a38bc35bceefb5fed7e705500375f7ca3d99837fbc938",
+   "lib/optimizer/formationOptimizer.ts": "831fb9bc0a08f9d3b8b6be448168170392174382c4d4ec28f2f8e4fcd8fc068e",
+   "lib/optimizer/lp-solver.d.ts": "1640c44eabede2a91c1444e097d8435b110c0397f9b3157d31360130b56df55b",
+   "lib/optimizer/squadOptimizer.ts": "eddb7dd5a6e66adda655009f89c0f7d7640d246eb5dbee7737d5b9765ae490c9",
+   "lib/optimizer/validation.ts": "f586a82f905d48b2b38dd71869093b0bf3a777b42b43d4b98d00babb543d6c36",
+   "lib/strategies/balancedPlus.ts": "fa462b714d4cbf919ecbfaf8e3f8de80b35991967f4758d0a2139f5b7ffebe75"
+  },
+  "balancedPlusParameters": {
+   "name": "Balanced Plus",
+   "maxPerClubXI": 2,
+   "xiMinStartProb": 0.75,
+   "xiMinExpMinutes": 60,
+   "xiMinAvailability": 0.9,
+   "benchMinStartProb": 0.5,
+   "minAvailability": 0.75,
+   "benchWeight": 0.25,
+   "benchTargets": [
+    12,
+    11,
+    10,
+    9,
+    8,
+    6,
+    0
+   ],
+   "viceMinStartProb": 0.85,
+   "viceMinAvailability": 0.9
+  },
+  "horizonWeights": [
+   1,
+   0.9,
+   0.8,
+   0.7,
+   0.6
+  ]
+ },
+ "data": {
+  "source": "https://github.com/vaastav/Fantasy-Premier-League",
+  "upstreamCommit": "d7b05b51d137bfefef4b692386d18c610975b9b9",
+  "fetchedAt": "2026-11-12T20:02:48.280Z",
+  "files": [
+   {
+    "season": "2022-23",
+    "file": "gws/merged_gw.csv",
+    "sha256": "b78a6d0456141f9033c32fc4122931baae780ac4a4938683451b1fce7a4fdd15"
+   },
+   {
+    "season": "2022-23",
+    "file": "fixtures.csv",
+    "sha256": "e783060da73700d4ec6fd12acec4568524eac8bb3ba3ccd8ce68a374dadba8f8"
+   },
+   {
+    "season": "2022-23",
+    "file": "teams.csv",
+    "sha256": "be6a1fe120a61f9c441a0751ca177c933bcbf234c1d28d49b3cd8827ca18066b"
+   },
+   {
+    "season": "2023-24",
+    "file": "gws/merged_gw.csv",
+    "sha256": "e9c09c8856f1c86b4f920f46ddd5033af83409439dfda53be925df2a3e7c8a9e"
+   },
+   {
+    "season": "2023-24",
+    "file": "fixtures.csv",
+    "sha256": "d8521bdbb80edb5141bc17df71bf6026275f2e56fd6a6dc6041b3ae23a39ce6a"
+   },
+   {
+    "season": "2023-24",
+    "file": "teams.csv",
+    "sha256": "7795f091ccea17fda0752cb07b935e1515b09a9d3f924147997cbf28139edd49"
+   },
+   {
+    "season": "2024-25",
+    "file": "gws/merged_gw.csv",
+    "sha256": "5bbbcba6353b4c72ad273adcc8e3aa451946a826564679788f45b1cb3325b84e"
+   },
+   {
+    "season": "2024-25",
+    "file": "fixtures.csv",
+    "sha256": "ce696e187569ca7c45da2562811d3c38f525b58e65575531be37bebd0769ee28"
+   },
+   {
+    "season": "2024-25",
+    "file": "teams.csv",
+    "sha256": "d10a6db8feca6db9e44a3ba50b15168396667ea387fee9235d6b211c7f598c3b"
+   },
+   {
+    "season": "2025-26",
+    "file": "gws/merged_gw.csv",
+    "sha256": "0d09f1f1cb1b5520ec8e2f25238aa652efe2a263d8ca7cb2b6538b27bf86727d"
+   },
+   {
+    "season": "2025-26",
+    "file": "fixtures.csv",
+    "sha256": "2d7e3950d346df14ca486cb09e9b9ba406d37d943775244eed06cdc021ffb3a9"
+   },
+   {
+    "season": "2025-26",
+    "file": "teams.csv",
+    "sha256": "b29df099cb0ad25413e284e53116099b0e0496874f99743dbc0870d8241b46c5"
+   }
+  ]
+ },
+ "design": {
+  "windowLengthGameweeks": 5,
+  "strategies": [
+   "balanced",
+   "safe",
+   "aggressive",
+   "balanced-plus"
+  ],
+  "baseline": "balanced",
+  "unit": "five-gameweek window with a fixed squad",
+  "firstWindowStart": {
+   "2023-24": 6,
+   "2024-25": 6,
+   "2025-26": 6,
+   "2022-23": 6
+  },
+  "roles": {
+   "2023-24": "development",
+   "2024-25": "evaluation",
+   "2025-26": "evaluation",
+   "2022-23": "supplementary"
+  }
+ },
+ "coverage": {
+  "2023-24": {
+   "role": "development",
+   "note": "Development season: used to verify the harness only. No parameter was chosen from it.",
+   "players": 865,
+   "gameweeks": 38,
+   "gameweeksWithFixtures": 38,
+   "defensiveContribution": false,
+   "firstWindowStart": 6
+  },
+  "2024-25": {
+   "role": "evaluation",
+   "note": "Held-out evaluation.",
+   "players": 804,
+   "gameweeks": 38,
+   "gameweeksWithFixtures": 38,
+   "defensiveContribution": false,
+   "firstWindowStart": 6
+  },
+  "2025-26": {
+   "role": "evaluation",
+   "note": "Held-out evaluation (defensive-contribution scoring active).",
+   "players": 841,
+   "gameweeks": 38,
+   "gameweeksWithFixtures": 38,
+   "defensiveContribution": true,
+   "firstWindowStart": 6
+  },
+  "2022-23": {
+   "role": "supplementary",
+   "note": "Attempted and EXCLUDED by the data-quality gate: the source has no `starts` for GW1-15 and no xG/xA for GW1-14, so no window has a valid history.",
+   "players": 778,
+   "gameweeks": 38,
+   "gameweeksWithFixtures": 37,
+   "defensiveContribution": false,
+   "firstWindowStart": 6
+  }
+ },
+ "skippedWindows": [
+  {
+   "season": "2022-23",
+   "k": 6,
+   "reason": "no fixtures recorded for GW7"
+  },
+  {
+   "season": "2022-23",
+   "k": 7,
+   "reason": "no fixtures recorded for GW7"
+  },
+  {
+   "season": "2022-23",
+   "k": 8,
+   "reason": "data-quality gate: starts missing in GW1-6 (6); xG/xA missing in GW1-6 (6)"
+  },
+  {
+   "season": "2022-23",
+   "k": 9,
+   "reason": "data-quality gate: starts missing in GW1-8 (7); xG/xA missing in GW1-8 (7)"
+  },
+  {
+   "season": "2022-23",
+   "k": 10,
+   "reason": "data-quality gate: starts missing in GW1-9 (8); xG/xA missing in GW1-9 (8)"
+  },
+  {
+   "season": "2022-23",
+   "k": 11,
+   "reason": "data-quality gate: starts missing in GW1-10 (9); xG/xA missing in GW1-10 (9)"
+  },
+  {
+   "season": "2022-23",
+   "k": 12,
+   "reason": "data-quality gate: starts missing in GW1-11 (10); xG/xA missing in GW1-11 (10)"
+  },
+  {
+   "season": "2022-23",
+   "k": 13,
+   "reason": "data-quality gate: starts missing in GW1-12 (11); xG/xA missing in GW1-12 (11)"
+  },
+  {
+   "season": "2022-23",
+   "k": 14,
+   "reason": "data-quality gate: starts missing in GW1-13 (12); xG/xA missing in GW1-13 (12)"
+  },
+  {
+   "season": "2022-23",
+   "k": 15,
+   "reason": "data-quality gate: starts missing in GW1-14 (13); xG/xA missing in GW1-14 (13)"
+  },
+  {
+   "season": "2022-23",
+   "k": 16,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 17,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 18,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 19,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 20,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 21,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 22,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 23,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 24,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 25,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 26,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 27,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 28,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 29,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 30,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 31,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 32,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 33,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  },
+  {
+   "season": "2022-23",
+   "k": 34,
+   "reason": "data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  }
+ ],
+ "assumptions": [
+  "Squads are chosen at deadline k from rows with round < k only; lineups at each later gameweek use rows with round < that gameweek.",
+  "Prices are the previous gameweek's price (up to ~7 days stale); the £100m budget and 3-per-club limit apply to every strategy.",
+  "Injury/suspension/availability news has no point-in-time source and is NOT used. A proxy from past minutes only (0 minutes in each of a club's last two matches => doubtful) is applied equally to all strategies; Stage C removes it.",
+  "The fixture list is the FINAL season schedule, so fixtures rearranged after an earlier deadline appear in their final gameweek. FDR is not used.",
+  "A player with no row before the deadline is unknown at that deadline (new signings are invisible until they have a row).",
+  "Strategies hold one squad for five gameweeks (no transfers, chips, or price changes) and re-pick XI/bench/captain at each gameweek with their own lineup rule. FPL auto-substitutions and the vice-captain rule are applied.",
+  "Ownership % is derived as selected / (sum of selected / 15) of the previous gameweek.",
+  "`form` is derived as the mean points of the last three appearances.",
+  "Source data is a third-party scrape (vaastav/Fantasy-Premier-League); completeness and accuracy are assumed, not verified against FPL.",
+  "Windows containing a gameweek with no recorded fixtures are skipped.",
+  "Parameters were NOT tuned on any window. The sensitivity runs are descriptive."
+ ],
+ "development": {
+  "windows": 29,
+  "strategies": [
+   {
+    "id": "balanced",
+    "label": "Balanced",
+    "windows": 29,
+    "gameweeks": 145,
+    "meanWindowPoints": 270.241,
+    "medianWindowPoints": 265,
+    "sdWindowPoints": 54.499,
+    "meanPointsPerGw": 54.048,
+    "xiPointsPerGw": 47.517,
+    "captainPointsPerGw": 6.531,
+    "captain": {
+     "meanPoints": 6.531,
+     "blankRate": 0.324,
+     "haulRate": 0.262,
+     "didNotPlayRate": 0.138,
+     "meanRankInXI": 4.186,
+     "meanRegretVsBestInXI": 6.366
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 51.294,
+     "meanActualPerGw": 54.048,
+     "biasPerGw": -2.754,
+     "squadMAEPerGw": 15.578,
+     "windowMAE": 35.738,
+     "playerMAE": 3.158,
+     "playerBias": 0.007
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 77.636,
+     "didNotPlayRate": 0.117,
+     "under60Rate": 0.189,
+     "autoSubsPerGw": 0.855
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 2.545,
+     "unusedBenchPointsPerGw": 5.448
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 2.717,
+     "shareOfGwsWith3Plus": 0.717
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 76,
+      "meanPoints": 53.763
+     },
+     "4-3-3": {
+      "gameweeks": 12,
+      "meanPoints": 63.417
+     },
+     "3-5-2": {
+      "gameweeks": 44,
+      "meanPoints": 52.75
+     },
+     "4-4-2": {
+      "gameweeks": 10,
+      "meanPoints": 49.9
+     },
+     "5-3-2": {
+      "gameweeks": 2,
+      "meanPoints": 55
+     },
+     "5-2-3": {
+      "gameweeks": 1,
+      "meanPoints": 60
+     }
+    },
+    "lineupRelaxedShare": 0
+   },
+   {
+    "id": "safe",
+    "label": "Safe",
+    "windows": 29,
+    "gameweeks": 145,
+    "meanWindowPoints": 268.138,
+    "medianWindowPoints": 265,
+    "sdWindowPoints": 56.325,
+    "meanPointsPerGw": 53.628,
+    "xiPointsPerGw": 47.076,
+    "captainPointsPerGw": 6.552,
+    "captain": {
+     "meanPoints": 6.552,
+     "blankRate": 0.324,
+     "haulRate": 0.262,
+     "didNotPlayRate": 0.138,
+     "meanRankInXI": 4.193,
+     "meanRegretVsBestInXI": 6.255
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 51.32,
+     "meanActualPerGw": 53.628,
+     "biasPerGw": -2.308,
+     "squadMAEPerGw": 15.359,
+     "windowMAE": 36.402,
+     "playerMAE": 3.141,
+     "playerBias": 0.039
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 77.835,
+     "didNotPlayRate": 0.12,
+     "under60Rate": 0.189,
+     "autoSubsPerGw": 0.897
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 2.434,
+     "unusedBenchPointsPerGw": 5.855
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 2.703,
+     "shareOfGwsWith3Plus": 0.703
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 83,
+      "meanPoints": 53.578
+     },
+     "4-4-2": {
+      "gameweeks": 9,
+      "meanPoints": 42.111
+     },
+     "4-3-3": {
+      "gameweeks": 15,
+      "meanPoints": 64.2
+     },
+     "3-5-2": {
+      "gameweeks": 32,
+      "meanPoints": 50.156
+     },
+     "5-4-1": {
+      "gameweeks": 1,
+      "meanPoints": 79
+     },
+     "4-5-1": {
+      "gameweeks": 1,
+      "meanPoints": 68
+     },
+     "5-2-3": {
+      "gameweeks": 2,
+      "meanPoints": 64.5
+     },
+     "5-3-2": {
+      "gameweeks": 2,
+      "meanPoints": 53
+     }
+    },
+    "lineupRelaxedShare": 0
+   },
+   {
+    "id": "aggressive",
+    "label": "Aggressive",
+    "windows": 29,
+    "gameweeks": 145,
+    "meanWindowPoints": 265.345,
+    "medianWindowPoints": 247,
+    "sdWindowPoints": 54.335,
+    "meanPointsPerGw": 53.069,
+    "xiPointsPerGw": 46.497,
+    "captainPointsPerGw": 6.572,
+    "captain": {
+     "meanPoints": 6.572,
+     "blankRate": 0.29,
+     "haulRate": 0.262,
+     "didNotPlayRate": 0.124,
+     "meanRankInXI": 3.903,
+     "meanRegretVsBestInXI": 5.814
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 50.769,
+     "meanActualPerGw": 53.069,
+     "biasPerGw": -2.3,
+     "squadMAEPerGw": 15.639,
+     "windowMAE": 33.078,
+     "playerMAE": 3.141,
+     "playerBias": 0.026
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 77.969,
+     "didNotPlayRate": 0.12,
+     "under60Rate": 0.189,
+     "autoSubsPerGw": 0.848
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 2.255,
+     "unusedBenchPointsPerGw": 6.51
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 2.71,
+     "shareOfGwsWith3Plus": 0.717
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 68,
+      "meanPoints": 53.029
+     },
+     "4-3-3": {
+      "gameweeks": 7,
+      "meanPoints": 53.857
+     },
+     "3-5-2": {
+      "gameweeks": 51,
+      "meanPoints": 54
+     },
+     "4-4-2": {
+      "gameweeks": 11,
+      "meanPoints": 51.182
+     },
+     "4-5-1": {
+      "gameweeks": 1,
+      "meanPoints": 32
+     },
+     "5-4-1": {
+      "gameweeks": 1,
+      "meanPoints": 23
+     },
+     "5-3-2": {
+      "gameweeks": 5,
+      "meanPoints": 56.4
+     },
+     "5-2-3": {
+      "gameweeks": 1,
+      "meanPoints": 58
+     }
+    },
+    "lineupRelaxedShare": 0
+   },
+   {
+    "id": "balanced-plus",
+    "label": "Balanced Plus",
+    "windows": 29,
+    "gameweeks": 145,
+    "meanWindowPoints": 290,
+    "medianWindowPoints": 276,
+    "sdWindowPoints": 62.76,
+    "meanPointsPerGw": 58,
+    "xiPointsPerGw": 50.759,
+    "captainPointsPerGw": 7.241,
+    "captain": {
+     "meanPoints": 7.241,
+     "blankRate": 0.255,
+     "haulRate": 0.317,
+     "didNotPlayRate": 0.166,
+     "meanRankInXI": 4.338,
+     "meanRegretVsBestInXI": 6.048
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 52.371,
+     "meanActualPerGw": 58,
+     "biasPerGw": -5.629,
+     "squadMAEPerGw": 16.152,
+     "windowMAE": 43.797,
+     "playerMAE": 3.213,
+     "playerBias": -0.083
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 80.352,
+     "didNotPlayRate": 0.1,
+     "under60Rate": 0.161,
+     "autoSubsPerGw": 0.869
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 3.821,
+     "unusedBenchPointsPerGw": 7.186
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 1.966,
+     "shareOfGwsWith3Plus": 0
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 82,
+      "meanPoints": 61.829
+     },
+     "3-5-2": {
+      "gameweeks": 44,
+      "meanPoints": 49.818
+     },
+     "4-4-2": {
+      "gameweeks": 8,
+      "meanPoints": 46.5
+     },
+     "4-3-3": {
+      "gameweeks": 9,
+      "meanPoints": 75.889
+     },
+     "5-3-2": {
+      "gameweeks": 2,
+      "meanPoints": 46.5
+     }
+    },
+    "lineupRelaxedShare": 0.028
+   }
+  ],
+  "windowResults": {
+   "balanced": {
+    "sharedWinPct": 13.793,
+    "outrightWinPct": 13.793,
+    "averageRank": 2.569
+   },
+   "safe": {
+    "sharedWinPct": 10.345,
+    "outrightWinPct": 10.345,
+    "averageRank": 2.897
+   },
+   "aggressive": {
+    "sharedWinPct": 10.345,
+    "outrightWinPct": 10.345,
+    "averageRank": 3
+   },
+   "balanced-plus": {
+    "sharedWinPct": 65.517,
+    "outrightWinPct": 65.517,
+    "averageRank": 1.534
+   }
+  },
+  "pairedVsBaseline": {
+   "safe": {
+    "vs": "balanced",
+    "nWindows": 29,
+    "nNonOverlapping": 6,
+    "meanDiff": -2.103,
+    "medianDiff": 0,
+    "sdDiff": 11.968,
+    "varianceDiff": 143.239,
+    "tCI95NonOverlapping": [
+     -13.386,
+     16.053
+    ],
+    "blockBootstrapCI95": [
+     -5.966,
+     2.793
+    ],
+    "signTest": {
+     "wins": 3,
+     "losses": 1,
+     "ties": 2,
+     "p": 0.625
+    },
+    "effectSize": -0.176,
+    "evidence": "no-evidence-of-difference"
+   },
+   "aggressive": {
+    "vs": "balanced",
+    "nWindows": 29,
+    "nNonOverlapping": 6,
+    "meanDiff": -4.897,
+    "medianDiff": -9,
+    "sdDiff": 23.129,
+    "varianceDiff": 534.953,
+    "tCI95NonOverlapping": [
+     -29.686,
+     24.353
+    ],
+    "blockBootstrapCI95": [
+     -9.862,
+     2.621
+    ],
+    "signTest": {
+     "wins": 3,
+     "losses": 3,
+     "ties": 0,
+     "p": 1
+    },
+    "effectSize": -0.212,
+    "evidence": "no-evidence-of-difference"
+   },
+   "balanced-plus": {
+    "vs": "balanced",
+    "nWindows": 29,
+    "nNonOverlapping": 6,
+    "meanDiff": 19.759,
+    "medianDiff": 12,
+    "sdDiff": 30.286,
+    "varianceDiff": 917.261,
+    "tCI95NonOverlapping": [
+     -7.97,
+     31.97
+    ],
+    "blockBootstrapCI95": [
+     11.655,
+     28.345
+    ],
+    "signTest": {
+     "wins": 4,
+     "losses": 1,
+     "ties": 1,
+     "p": 0.375
+    },
+    "effectSize": 0.652,
+    "evidence": "no-evidence-of-difference"
+   }
+  },
+  "rotation": {
+   "medianRotationIndex": 0.247,
+   "high": {
+    "balanced": {
+     "n": 14,
+     "meanWindowPoints": 227.357,
+     "diffVsBaseline": 0
+    },
+    "safe": {
+     "n": 14,
+     "meanWindowPoints": 222.714,
+     "diffVsBaseline": -4.643
+    },
+    "aggressive": {
+     "n": 14,
+     "meanWindowPoints": 228.429,
+     "diffVsBaseline": 1.071
+    },
+    "balanced-plus": {
+     "n": 14,
+     "meanWindowPoints": 242.071,
+     "diffVsBaseline": 14.714
+    }
+   },
+   "low": {
+    "balanced": {
+     "n": 15,
+     "meanWindowPoints": 310.267,
+     "diffVsBaseline": 0
+    },
+    "safe": {
+     "n": 15,
+     "meanWindowPoints": 310.533,
+     "diffVsBaseline": 0.267
+    },
+    "aggressive": {
+     "n": 15,
+     "meanWindowPoints": 299.8,
+     "diffVsBaseline": -10.467
+    },
+    "balanced-plus": {
+     "n": 15,
+     "meanWindowPoints": 334.733,
+     "diffVsBaseline": 24.467
+    }
+   }
+  }
+ },
+ "evaluation": {
+  "pooled": {
+   "windows": 58,
+   "strategies": [
+    {
+     "id": "balanced",
+     "label": "Balanced",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 291.655,
+     "medianWindowPoints": 280.5,
+     "sdWindowPoints": 46.39,
+     "meanPointsPerGw": 58.331,
+     "xiPointsPerGw": 50.307,
+     "captainPointsPerGw": 8.024,
+     "captain": {
+      "meanPoints": 8.024,
+      "blankRate": 0.29,
+      "haulRate": 0.369,
+      "didNotPlayRate": 0.048,
+      "meanRankInXI": 3.548,
+      "meanRegretVsBestInXI": 5.041
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.385,
+      "meanActualPerGw": 58.331,
+      "biasPerGw": -3.946,
+      "squadMAEPerGw": 12.953,
+      "windowMAE": 35.626,
+      "playerMAE": 3.026,
+      "playerBias": -0.056
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 80.499,
+      "didNotPlayRate": 0.078,
+      "under60Rate": 0.131,
+      "autoSubsPerGw": 0.617
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.121,
+      "unusedBenchPointsPerGw": 8.707
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.624,
+      "shareOfGwsWith3Plus": 0.624
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 181,
+       "meanPoints": 57.983
+      },
+      "3-5-2": {
+       "gameweeks": 47,
+       "meanPoints": 59.468
+      },
+      "4-3-3": {
+       "gameweeks": 25,
+       "meanPoints": 62.32
+      },
+      "5-4-1": {
+       "gameweeks": 3,
+       "meanPoints": 42.333
+      },
+      "4-4-2": {
+       "gameweeks": 28,
+       "meanPoints": 55.893
+      },
+      "5-2-3": {
+       "gameweeks": 2,
+       "meanPoints": 51.5
+      },
+      "5-3-2": {
+       "gameweeks": 4,
+       "meanPoints": 68.25
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "safe",
+     "label": "Safe",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 289.017,
+     "medianWindowPoints": 288,
+     "sdWindowPoints": 43.691,
+     "meanPointsPerGw": 57.803,
+     "xiPointsPerGw": 49.855,
+     "captainPointsPerGw": 7.948,
+     "captain": {
+      "meanPoints": 7.948,
+      "blankRate": 0.293,
+      "haulRate": 0.362,
+      "didNotPlayRate": 0.045,
+      "meanRankInXI": 3.566,
+      "meanRegretVsBestInXI": 5.028
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.315,
+      "meanActualPerGw": 57.803,
+      "biasPerGw": -3.489,
+      "squadMAEPerGw": 12.74,
+      "windowMAE": 34.192,
+      "playerMAE": 2.994,
+      "playerBias": -0.002
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.232,
+      "didNotPlayRate": 0.076,
+      "under60Rate": 0.127,
+      "autoSubsPerGw": 0.617
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.341,
+      "unusedBenchPointsPerGw": 8.769
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.603,
+      "shareOfGwsWith3Plus": 0.607
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 180,
+       "meanPoints": 57.589
+      },
+      "4-3-3": {
+       "gameweeks": 27,
+       "meanPoints": 51.704
+      },
+      "3-5-2": {
+       "gameweeks": 49,
+       "meanPoints": 63.612
+      },
+      "5-4-1": {
+       "gameweeks": 3,
+       "meanPoints": 40.333
+      },
+      "4-4-2": {
+       "gameweeks": 22,
+       "meanPoints": 50.591
+      },
+      "5-3-2": {
+       "gameweeks": 6,
+       "meanPoints": 73
+      },
+      "5-2-3": {
+       "gameweeks": 3,
+       "meanPoints": 70.667
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "aggressive",
+     "label": "Aggressive",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 290.431,
+     "medianWindowPoints": 288.5,
+     "sdWindowPoints": 43.957,
+     "meanPointsPerGw": 58.086,
+     "xiPointsPerGw": 50.238,
+     "captainPointsPerGw": 7.848,
+     "captain": {
+      "meanPoints": 7.848,
+      "blankRate": 0.293,
+      "haulRate": 0.352,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.583,
+      "meanRegretVsBestInXI": 5.134
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 53.266,
+      "meanActualPerGw": 58.086,
+      "biasPerGw": -4.82,
+      "squadMAEPerGw": 12.824,
+      "windowMAE": 36.47,
+      "playerMAE": 3.021,
+      "playerBias": -0.122
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 79.692,
+      "didNotPlayRate": 0.081,
+      "under60Rate": 0.141,
+      "autoSubsPerGw": 0.666
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.424,
+      "unusedBenchPointsPerGw": 8.403
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.672,
+      "shareOfGwsWith3Plus": 0.672
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 153,
+       "meanPoints": 57.124
+      },
+      "3-5-2": {
+       "gameweeks": 71,
+       "meanPoints": 60.69
+      },
+      "4-3-3": {
+       "gameweeks": 11,
+       "meanPoints": 56.545
+      },
+      "4-4-2": {
+       "gameweeks": 36,
+       "meanPoints": 58.167
+      },
+      "4-5-1": {
+       "gameweeks": 8,
+       "meanPoints": 50.875
+      },
+      "5-4-1": {
+       "gameweeks": 4,
+       "meanPoints": 60.25
+      },
+      "5-2-3": {
+       "gameweeks": 1,
+       "meanPoints": 59
+      },
+      "5-3-2": {
+       "gameweeks": 6,
+       "meanPoints": 62.167
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "balanced-plus",
+     "label": "Balanced Plus",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 297.276,
+     "medianWindowPoints": 291,
+     "sdWindowPoints": 46.621,
+     "meanPointsPerGw": 59.455,
+     "xiPointsPerGw": 51.19,
+     "captainPointsPerGw": 8.266,
+     "captain": {
+      "meanPoints": 8.266,
+      "blankRate": 0.279,
+      "haulRate": 0.386,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.562,
+      "meanRegretVsBestInXI": 4.938
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.598,
+      "meanActualPerGw": 59.455,
+      "biasPerGw": -4.857,
+      "squadMAEPerGw": 13.475,
+      "windowMAE": 36.26,
+      "playerMAE": 3.038,
+      "playerBias": -0.082
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.261,
+      "didNotPlayRate": 0.08,
+      "under60Rate": 0.124,
+      "autoSubsPerGw": 0.672
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.59,
+      "unusedBenchPointsPerGw": 9.872
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.986,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 173,
+       "meanPoints": 59.647
+      },
+      "3-5-2": {
+       "gameweeks": 77,
+       "meanPoints": 60.844
+      },
+      "4-3-3": {
+       "gameweeks": 15,
+       "meanPoints": 55.2
+      },
+      "4-5-1": {
+       "gameweeks": 3,
+       "meanPoints": 55
+      },
+      "5-4-1": {
+       "gameweeks": 1,
+       "meanPoints": 39
+      },
+      "4-4-2": {
+       "gameweeks": 19,
+       "meanPoints": 58.158
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 50.5
+      }
+     },
+     "lineupRelaxedShare": 0.017
+    }
+   ],
+   "windowResults": {
+    "balanced": {
+     "sharedWinPct": 25.575,
+     "outrightWinPct": 22.414,
+     "averageRank": 2.353
+    },
+    "safe": {
+     "sharedWinPct": 10.92,
+     "outrightWinPct": 8.621,
+     "averageRank": 2.681
+    },
+    "aggressive": {
+     "sharedWinPct": 25,
+     "outrightWinPct": 24.138,
+     "averageRank": 2.629
+    },
+    "balanced-plus": {
+     "sharedWinPct": 38.506,
+     "outrightWinPct": 37.931,
+     "averageRank": 2.336
+    }
+   },
+   "pairedVsBaseline": {
+    "safe": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -2.638,
+     "medianDiff": -1.5,
+     "sdDiff": 15.352,
+     "varianceDiff": 235.674,
+     "tCI95NonOverlapping": [
+      -17.036,
+      1.369
+     ],
+     "blockBootstrapCI95": [
+      -6.241,
+      1.707
+     ],
+     "signTest": {
+      "wins": 4,
+      "losses": 8,
+      "ties": 0,
+      "p": 0.3876953125
+     },
+     "effectSize": -0.172,
+     "evidence": "no-evidence-of-difference"
+    },
+    "aggressive": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -1.224,
+     "medianDiff": -3.5,
+     "sdDiff": 23.291,
+     "varianceDiff": 542.458,
+     "tCI95NonOverlapping": [
+      -6.436,
+      19.269
+     ],
+     "blockBootstrapCI95": [
+      -6.672,
+      6.379
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 4,
+      "ties": 1,
+      "p": 0.548828125
+     },
+     "effectSize": -0.053,
+     "evidence": "no-evidence-of-difference"
+    },
+    "balanced-plus": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 5.621,
+     "medianDiff": -1.5,
+     "sdDiff": 33.599,
+     "varianceDiff": 1128.871,
+     "tCI95NonOverlapping": [
+      -19.678,
+      26.011
+     ],
+     "blockBootstrapCI95": [
+      -2.138,
+      15.328
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 5,
+      "ties": 0,
+      "p": 0.7744140625
+     },
+     "effectSize": 0.167,
+     "evidence": "no-evidence-of-difference"
+    }
+   },
+   "rotation": {
+    "medianRotationIndex": 0.23,
+    "high": {
+     "balanced": {
+      "n": 29,
+      "meanWindowPoints": 292.172,
+      "diffVsBaseline": 0
+     },
+     "safe": {
+      "n": 29,
+      "meanWindowPoints": 289.862,
+      "diffVsBaseline": -2.31
+     },
+     "aggressive": {
+      "n": 29,
+      "meanWindowPoints": 284.31,
+      "diffVsBaseline": -7.862
+     },
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 290.379,
+      "diffVsBaseline": -1.793
+     }
+    },
+    "low": {
+     "balanced": {
+      "n": 29,
+      "meanWindowPoints": 291.138,
+      "diffVsBaseline": 0
+     },
+     "safe": {
+      "n": 29,
+      "meanWindowPoints": 288.172,
+      "diffVsBaseline": -2.966
+     },
+     "aggressive": {
+      "n": 29,
+      "meanWindowPoints": 296.552,
+      "diffVsBaseline": 5.414
+     },
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 304.172,
+      "diffVsBaseline": 13.034
+     }
+    }
+   }
+  },
+  "perSeason": {
+   "2024-25": {
+    "windows": 29,
+    "strategies": [
+     {
+      "id": "balanced",
+      "label": "Balanced",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 300.207,
+      "medianWindowPoints": 297,
+      "sdWindowPoints": 56.549,
+      "meanPointsPerGw": 60.041,
+      "xiPointsPerGw": 50.559,
+      "captainPointsPerGw": 9.483,
+      "captain": {
+       "meanPoints": 9.483,
+       "blankRate": 0.2,
+       "haulRate": 0.407,
+       "didNotPlayRate": 0.014,
+       "meanRankInXI": 2.883,
+       "meanRegretVsBestInXI": 3.993
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 54.98,
+       "meanActualPerGw": 60.041,
+       "biasPerGw": -5.061,
+       "squadMAEPerGw": 13.764,
+       "windowMAE": 44.116,
+       "playerMAE": 3.084,
+       "playerBias": -0.121
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 80.33,
+       "didNotPlayRate": 0.066,
+       "under60Rate": 0.133,
+       "autoSubsPerGw": 0.524
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 1.51,
+       "unusedBenchPointsPerGw": 8.759
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 2.683,
+       "shareOfGwsWith3Plus": 0.683
+      },
+      "byFormation": {
+       "3-4-3": {
+        "gameweeks": 109,
+        "meanPoints": 60.908
+       },
+       "3-5-2": {
+        "gameweeks": 22,
+        "meanPoints": 57
+       },
+       "4-3-3": {
+        "gameweeks": 5,
+        "meanPoints": 76.8
+       },
+       "5-4-1": {
+        "gameweeks": 3,
+        "meanPoints": 42.333
+       },
+       "4-4-2": {
+        "gameweeks": 6,
+        "meanPoints": 50.333
+       }
+      },
+      "lineupRelaxedShare": 0
+     },
+     {
+      "id": "safe",
+      "label": "Safe",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 291.862,
+      "medianWindowPoints": 288,
+      "sdWindowPoints": 53.814,
+      "meanPointsPerGw": 58.372,
+      "xiPointsPerGw": 49.041,
+      "captainPointsPerGw": 9.331,
+      "captain": {
+       "meanPoints": 9.331,
+       "blankRate": 0.207,
+       "haulRate": 0.393,
+       "didNotPlayRate": 0.007,
+       "meanRankInXI": 2.841,
+       "meanRegretVsBestInXI": 3.938
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 54.786,
+       "meanActualPerGw": 58.372,
+       "biasPerGw": -3.586,
+       "squadMAEPerGw": 13.623,
+       "windowMAE": 41.084,
+       "playerMAE": 3.051,
+       "playerBias": 0.018
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 80.981,
+       "didNotPlayRate": 0.066,
+       "under60Rate": 0.131,
+       "autoSubsPerGw": 0.552
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 1.745,
+       "unusedBenchPointsPerGw": 8.952
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 2.634,
+       "shareOfGwsWith3Plus": 0.634
+      },
+      "byFormation": {
+       "3-4-3": {
+        "gameweeks": 107,
+        "meanPoints": 58.804
+       },
+       "4-3-3": {
+        "gameweeks": 6,
+        "meanPoints": 54.5
+       },
+       "3-5-2": {
+        "gameweeks": 22,
+        "meanPoints": 62.227
+       },
+       "5-4-1": {
+        "gameweeks": 3,
+        "meanPoints": 40.333
+       },
+       "4-4-2": {
+        "gameweeks": 6,
+        "meanPoints": 49.833
+       },
+       "5-3-2": {
+        "gameweeks": 1,
+        "meanPoints": 56
+       }
+      },
+      "lineupRelaxedShare": 0
+     },
+     {
+      "id": "aggressive",
+      "label": "Aggressive",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 294.655,
+      "medianWindowPoints": 296,
+      "sdWindowPoints": 55.379,
+      "meanPointsPerGw": 58.931,
+      "xiPointsPerGw": 49.614,
+      "captainPointsPerGw": 9.317,
+      "captain": {
+       "meanPoints": 9.317,
+       "blankRate": 0.207,
+       "haulRate": 0.393,
+       "didNotPlayRate": 0.007,
+       "meanRankInXI": 2.786,
+       "meanRegretVsBestInXI": 3.89
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 53.788,
+       "meanActualPerGw": 58.931,
+       "biasPerGw": -5.143,
+       "squadMAEPerGw": 13.778,
+       "windowMAE": 44.18,
+       "playerMAE": 3.07,
+       "playerBias": -0.101
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 78.837,
+       "didNotPlayRate": 0.076,
+       "under60Rate": 0.151,
+       "autoSubsPerGw": 0.607
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 1.979,
+       "unusedBenchPointsPerGw": 8.317
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 2.717,
+       "shareOfGwsWith3Plus": 0.717
+      },
+      "byFormation": {
+       "3-4-3": {
+        "gameweeks": 99,
+        "meanPoints": 59.293
+       },
+       "3-5-2": {
+        "gameweeks": 33,
+        "meanPoints": 60.697
+       },
+       "4-3-3": {
+        "gameweeks": 2,
+        "meanPoints": 71.5
+       },
+       "4-4-2": {
+        "gameweeks": 8,
+        "meanPoints": 48.625
+       },
+       "4-5-1": {
+        "gameweeks": 2,
+        "meanPoints": 45
+       },
+       "5-4-1": {
+        "gameweeks": 1,
+        "meanPoints": 50
+       }
+      },
+      "lineupRelaxedShare": 0
+     },
+     {
+      "id": "balanced-plus",
+      "label": "Balanced Plus",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 316.069,
+      "medianWindowPoints": 320,
+      "sdWindowPoints": 54.167,
+      "meanPointsPerGw": 63.214,
+      "xiPointsPerGw": 53.4,
+      "captainPointsPerGw": 9.814,
+      "captain": {
+       "meanPoints": 9.814,
+       "blankRate": 0.186,
+       "haulRate": 0.421,
+       "didNotPlayRate": 0.007,
+       "meanRankInXI": 2.993,
+       "meanRegretVsBestInXI": 4.028
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 55.389,
+       "meanActualPerGw": 63.214,
+       "biasPerGw": -7.825,
+       "squadMAEPerGw": 15.052,
+       "windowMAE": 50.184,
+       "playerMAE": 3.186,
+       "playerBias": -0.292
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 81.646,
+       "didNotPlayRate": 0.067,
+       "under60Rate": 0.123,
+       "autoSubsPerGw": 0.655
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 2.145,
+       "unusedBenchPointsPerGw": 10.083
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 1.986,
+       "shareOfGwsWith3Plus": 0
+      },
+      "byFormation": {
+       "3-4-3": {
+        "gameweeks": 90,
+        "meanPoints": 63.067
+       },
+       "3-5-2": {
+        "gameweeks": 49,
+        "meanPoints": 64.449
+       },
+       "4-3-3": {
+        "gameweeks": 2,
+        "meanPoints": 64.5
+       },
+       "4-5-1": {
+        "gameweeks": 1,
+        "meanPoints": 35
+       },
+       "5-4-1": {
+        "gameweeks": 1,
+        "meanPoints": 39
+       },
+       "4-4-2": {
+        "gameweeks": 2,
+        "meanPoints": 64.5
+       }
+      },
+      "lineupRelaxedShare": 0
+     }
+    ],
+    "windowResults": {
+     "balanced": {
+      "sharedWinPct": 27.586,
+      "outrightWinPct": 27.586,
+      "averageRank": 2.293
+     },
+     "safe": {
+      "sharedWinPct": 3.448,
+      "outrightWinPct": 3.448,
+      "averageRank": 3.017
+     },
+     "aggressive": {
+      "sharedWinPct": 13.793,
+      "outrightWinPct": 13.793,
+      "averageRank": 2.828
+     },
+     "balanced-plus": {
+      "sharedWinPct": 55.172,
+      "outrightWinPct": 55.172,
+      "averageRank": 1.862
+     }
+    },
+    "pairedVsBaseline": {
+     "safe": {
+      "vs": "balanced",
+      "nWindows": 29,
+      "nNonOverlapping": 6,
+      "meanDiff": -8.345,
+      "medianDiff": -9,
+      "sdDiff": 16.257,
+      "varianceDiff": 264.305,
+      "tCI95NonOverlapping": [
+       -28.729,
+       3.063
+      ],
+      "blockBootstrapCI95": [
+       -11.379,
+       -4.828
+      ],
+      "signTest": {
+       "wins": 1,
+       "losses": 5,
+       "ties": 0,
+       "p": 0.21875
+      },
+      "effectSize": -0.513,
+      "evidence": "no-evidence-of-difference"
+     },
+     "aggressive": {
+      "vs": "balanced",
+      "nWindows": 29,
+      "nNonOverlapping": 6,
+      "meanDiff": -5.552,
+      "medianDiff": -6,
+      "sdDiff": 22.518,
+      "varianceDiff": 507.042,
+      "tCI95NonOverlapping": [
+       -7.251,
+       27.918
+      ],
+      "blockBootstrapCI95": [
+       -12.207,
+       0.448
+      ],
+      "signTest": {
+       "wins": 4,
+       "losses": 1,
+       "ties": 1,
+       "p": 0.375
+      },
+      "effectSize": -0.247,
+      "evidence": "no-evidence-of-difference"
+     },
+     "balanced-plus": {
+      "vs": "balanced",
+      "nWindows": 29,
+      "nNonOverlapping": 6,
+      "meanDiff": 15.862,
+      "medianDiff": 14,
+      "sdDiff": 37.876,
+      "varianceDiff": 1434.623,
+      "tCI95NonOverlapping": [
+       -29.245,
+       59.912
+      ],
+      "blockBootstrapCI95": [
+       7.862,
+       25.621
+      ],
+      "signTest": {
+       "wins": 5,
+       "losses": 1,
+       "ties": 0,
+       "p": 0.21875
+      },
+      "effectSize": 0.419,
+      "evidence": "no-evidence-of-difference"
+     }
+    },
+    "rotation": {
+     "medianRotationIndex": 0.23,
+     "high": {
+      "balanced": {
+       "n": 14,
+       "meanWindowPoints": 305.143,
+       "diffVsBaseline": 0
+      },
+      "safe": {
+       "n": 14,
+       "meanWindowPoints": 297.071,
+       "diffVsBaseline": -8.071
+      },
+      "aggressive": {
+       "n": 14,
+       "meanWindowPoints": 294.214,
+       "diffVsBaseline": -10.929
+      },
+      "balanced-plus": {
+       "n": 14,
+       "meanWindowPoints": 313.5,
+       "diffVsBaseline": 8.357
+      }
+     },
+     "low": {
+      "balanced": {
+       "n": 15,
+       "meanWindowPoints": 295.6,
+       "diffVsBaseline": 0
+      },
+      "safe": {
+       "n": 15,
+       "meanWindowPoints": 287,
+       "diffVsBaseline": -8.6
+      },
+      "aggressive": {
+       "n": 15,
+       "meanWindowPoints": 295.067,
+       "diffVsBaseline": -0.533
+      },
+      "balanced-plus": {
+       "n": 15,
+       "meanWindowPoints": 318.467,
+       "diffVsBaseline": 22.867
+      }
+     }
+    }
+   },
+   "2025-26": {
+    "windows": 29,
+    "strategies": [
+     {
+      "id": "balanced",
+      "label": "Balanced",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 283.103,
+      "medianWindowPoints": 277,
+      "sdWindowPoints": 32.12,
+      "meanPointsPerGw": 56.621,
+      "xiPointsPerGw": 50.055,
+      "captainPointsPerGw": 6.566,
+      "captain": {
+       "meanPoints": 6.566,
+       "blankRate": 0.379,
+       "haulRate": 0.331,
+       "didNotPlayRate": 0.083,
+       "meanRankInXI": 4.214,
+       "meanRegretVsBestInXI": 6.09
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 53.789,
+       "meanActualPerGw": 56.621,
+       "biasPerGw": -2.831,
+       "squadMAEPerGw": 12.141,
+       "windowMAE": 27.136,
+       "playerMAE": 2.968,
+       "playerBias": 0.009
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 80.668,
+       "didNotPlayRate": 0.09,
+       "under60Rate": 0.129,
+       "autoSubsPerGw": 0.71
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 2.731,
+       "unusedBenchPointsPerGw": 8.655
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 2.566,
+       "shareOfGwsWith3Plus": 0.566
+      },
+      "byFormation": {
+       "4-4-2": {
+        "gameweeks": 22,
+        "meanPoints": 57.409
+       },
+       "3-5-2": {
+        "gameweeks": 25,
+        "meanPoints": 61.64
+       },
+       "3-4-3": {
+        "gameweeks": 72,
+        "meanPoints": 53.556
+       },
+       "4-3-3": {
+        "gameweeks": 20,
+        "meanPoints": 58.7
+       },
+       "5-2-3": {
+        "gameweeks": 2,
+        "meanPoints": 51.5
+       },
+       "5-3-2": {
+        "gameweeks": 4,
+        "meanPoints": 68.25
+       }
+      },
+      "lineupRelaxedShare": 0
+     },
+     {
+      "id": "safe",
+      "label": "Safe",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 286.172,
+      "medianWindowPoints": 285,
+      "sdWindowPoints": 31.199,
+      "meanPointsPerGw": 57.234,
+      "xiPointsPerGw": 50.669,
+      "captainPointsPerGw": 6.566,
+      "captain": {
+       "meanPoints": 6.566,
+       "blankRate": 0.379,
+       "haulRate": 0.331,
+       "didNotPlayRate": 0.083,
+       "meanRankInXI": 4.29,
+       "meanRegretVsBestInXI": 6.117
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 53.843,
+       "meanActualPerGw": 57.234,
+       "biasPerGw": -3.391,
+       "squadMAEPerGw": 11.856,
+       "windowMAE": 27.3,
+       "playerMAE": 2.937,
+       "playerBias": -0.023
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 81.483,
+       "didNotPlayRate": 0.085,
+       "under60Rate": 0.122,
+       "autoSubsPerGw": 0.683
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 2.938,
+       "unusedBenchPointsPerGw": 8.586
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 2.572,
+       "shareOfGwsWith3Plus": 0.579
+      },
+      "byFormation": {
+       "4-4-2": {
+        "gameweeks": 16,
+        "meanPoints": 50.875
+       },
+       "3-4-3": {
+        "gameweeks": 73,
+        "meanPoints": 55.808
+       },
+       "4-3-3": {
+        "gameweeks": 21,
+        "meanPoints": 50.905
+       },
+       "5-2-3": {
+        "gameweeks": 3,
+        "meanPoints": 70.667
+       },
+       "3-5-2": {
+        "gameweeks": 27,
+        "meanPoints": 64.741
+       },
+       "5-3-2": {
+        "gameweeks": 5,
+        "meanPoints": 76.4
+       }
+      },
+      "lineupRelaxedShare": 0
+     },
+     {
+      "id": "aggressive",
+      "label": "Aggressive",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 286.207,
+      "medianWindowPoints": 286,
+      "sdWindowPoints": 28.803,
+      "meanPointsPerGw": 57.241,
+      "xiPointsPerGw": 50.862,
+      "captainPointsPerGw": 6.379,
+      "captain": {
+       "meanPoints": 6.379,
+       "blankRate": 0.379,
+       "haulRate": 0.31,
+       "didNotPlayRate": 0.076,
+       "meanRankInXI": 4.379,
+       "meanRegretVsBestInXI": 6.379
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 52.744,
+       "meanActualPerGw": 57.241,
+       "biasPerGw": -4.498,
+       "squadMAEPerGw": 11.871,
+       "windowMAE": 28.76,
+       "playerMAE": 2.973,
+       "playerBias": -0.143
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 80.547,
+       "didNotPlayRate": 0.085,
+       "under60Rate": 0.13,
+       "autoSubsPerGw": 0.724
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 2.869,
+       "unusedBenchPointsPerGw": 8.49
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 2.628,
+       "shareOfGwsWith3Plus": 0.628
+      },
+      "byFormation": {
+       "5-4-1": {
+        "gameweeks": 3,
+        "meanPoints": 63.667
+       },
+       "4-4-2": {
+        "gameweeks": 28,
+        "meanPoints": 60.893
+       },
+       "4-5-1": {
+        "gameweeks": 6,
+        "meanPoints": 52.833
+       },
+       "3-5-2": {
+        "gameweeks": 38,
+        "meanPoints": 60.684
+       },
+       "3-4-3": {
+        "gameweeks": 54,
+        "meanPoints": 53.148
+       },
+       "5-2-3": {
+        "gameweeks": 1,
+        "meanPoints": 59
+       },
+       "5-3-2": {
+        "gameweeks": 6,
+        "meanPoints": 62.167
+       },
+       "4-3-3": {
+        "gameweeks": 9,
+        "meanPoints": 53.222
+       }
+      },
+      "lineupRelaxedShare": 0
+     },
+     {
+      "id": "balanced-plus",
+      "label": "Balanced Plus",
+      "windows": 29,
+      "gameweeks": 145,
+      "meanWindowPoints": 278.483,
+      "medianWindowPoints": 275,
+      "sdWindowPoints": 27.549,
+      "meanPointsPerGw": 55.697,
+      "xiPointsPerGw": 48.979,
+      "captainPointsPerGw": 6.717,
+      "captain": {
+       "meanPoints": 6.717,
+       "blankRate": 0.372,
+       "haulRate": 0.352,
+       "didNotPlayRate": 0.076,
+       "meanRankInXI": 4.131,
+       "meanRegretVsBestInXI": 5.848
+      },
+      "projectedVsActual": {
+       "meanProjectedPerGw": 53.807,
+       "meanActualPerGw": 55.697,
+       "biasPerGw": -1.889,
+       "squadMAEPerGw": 11.899,
+       "windowMAE": 22.336,
+       "playerMAE": 2.891,
+       "playerBias": 0.128
+      },
+      "startingXI": {
+       "meanMinutesPerStarter": 80.876,
+       "didNotPlayRate": 0.093,
+       "under60Rate": 0.125,
+       "autoSubsPerGw": 0.69
+      },
+      "bench": {
+       "pointsAddedByAutoSubsPerGw": 3.034,
+       "unusedBenchPointsPerGw": 9.662
+      },
+      "clubConcentration": {
+       "meanMaxFromOneClubInXI": 1.986,
+       "shareOfGwsWith3Plus": 0
+      },
+      "byFormation": {
+       "5-3-2": {
+        "gameweeks": 2,
+        "meanPoints": 50.5
+       },
+       "4-4-2": {
+        "gameweeks": 17,
+        "meanPoints": 57.412
+       },
+       "3-4-3": {
+        "gameweeks": 83,
+        "meanPoints": 55.94
+       },
+       "4-5-1": {
+        "gameweeks": 2,
+        "meanPoints": 65
+       },
+       "4-3-3": {
+        "gameweeks": 13,
+        "meanPoints": 53.769
+       },
+       "3-5-2": {
+        "gameweeks": 28,
+        "meanPoints": 54.536
+       }
+      },
+      "lineupRelaxedShare": 0.034
+     }
+    ],
+    "windowResults": {
+     "balanced": {
+      "sharedWinPct": 23.563,
+      "outrightWinPct": 17.241,
+      "averageRank": 2.414
+     },
+     "safe": {
+      "sharedWinPct": 18.391,
+      "outrightWinPct": 13.793,
+      "averageRank": 2.345
+     },
+     "aggressive": {
+      "sharedWinPct": 36.207,
+      "outrightWinPct": 34.483,
+      "averageRank": 2.431
+     },
+     "balanced-plus": {
+      "sharedWinPct": 21.839,
+      "outrightWinPct": 20.69,
+      "averageRank": 2.81
+     }
+    },
+    "pairedVsBaseline": {
+     "safe": {
+      "vs": "balanced",
+      "nWindows": 29,
+      "nNonOverlapping": 6,
+      "meanDiff": 3.069,
+      "medianDiff": 0,
+      "sdDiff": 12.165,
+      "varianceDiff": 147.995,
+      "tCI95NonOverlapping": [
+       -16.605,
+       10.939
+      ],
+      "blockBootstrapCI95": [
+       -0.034,
+       7.241
+      ],
+      "signTest": {
+       "wins": 3,
+       "losses": 3,
+       "ties": 0,
+       "p": 1
+      },
+      "effectSize": 0.252,
+      "evidence": "no-evidence-of-difference"
+     },
+     "aggressive": {
+      "vs": "balanced",
+      "nWindows": 29,
+      "nNonOverlapping": 6,
+      "meanDiff": 3.103,
+      "medianDiff": 0,
+      "sdDiff": 23.632,
+      "varianceDiff": 558.453,
+      "tCI95NonOverlapping": [
+       -22.837,
+       27.837
+      ],
+      "blockBootstrapCI95": [
+       -4.724,
+       14.621
+      ],
+      "signTest": {
+       "wins": 3,
+       "losses": 3,
+       "ties": 0,
+       "p": 1
+      },
+      "effectSize": 0.131,
+      "evidence": "no-evidence-of-difference"
+     },
+     "balanced-plus": {
+      "vs": "balanced",
+      "nWindows": 29,
+      "nNonOverlapping": 6,
+      "meanDiff": -4.621,
+      "medianDiff": -7,
+      "sdDiff": 25.42,
+      "varianceDiff": 646.172,
+      "tCI95NonOverlapping": [
+       -36.467,
+       18.467
+      ],
+      "blockBootstrapCI95": [
+       -12.655,
+       6.759
+      ],
+      "signTest": {
+       "wins": 2,
+       "losses": 4,
+       "ties": 0,
+       "p": 0.6875
+      },
+      "effectSize": -0.182,
+      "evidence": "no-evidence-of-difference"
+     }
+    },
+    "rotation": {
+     "medianRotationIndex": 0.236,
+     "high": {
+      "balanced": {
+       "n": 14,
+       "meanWindowPoints": 276.357,
+       "diffVsBaseline": 0
+      },
+      "safe": {
+       "n": 14,
+       "meanWindowPoints": 280,
+       "diffVsBaseline": 3.643
+      },
+      "aggressive": {
+       "n": 14,
+       "meanWindowPoints": 273,
+       "diffVsBaseline": -3.357
+      },
+      "balanced-plus": {
+       "n": 14,
+       "meanWindowPoints": 266.714,
+       "diffVsBaseline": -9.643
+      }
+     },
+     "low": {
+      "balanced": {
+       "n": 15,
+       "meanWindowPoints": 289.4,
+       "diffVsBaseline": 0
+      },
+      "safe": {
+       "n": 15,
+       "meanWindowPoints": 291.933,
+       "diffVsBaseline": 2.533
+      },
+      "aggressive": {
+       "n": 15,
+       "meanWindowPoints": 298.533,
+       "diffVsBaseline": 9.133
+      },
+      "balanced-plus": {
+       "n": 15,
+       "meanWindowPoints": 289.467,
+       "diffVsBaseline": 0.067
+      }
+     }
+    }
+   }
+  }
+ },
+ "sensitivity": {
+  "note": "Ablations of Balanced Plus on the held-out seasons. Descriptive only: nothing was selected from this table.",
+  "variants": [
+   {
+    "id": "balanced",
+    "label": "Balanced"
+   },
+   {
+    "id": "safe",
+    "label": "Safe"
+   },
+   {
+    "id": "aggressive",
+    "label": "Aggressive"
+   },
+   {
+    "id": "balanced-plus",
+    "label": "Balanced Plus"
+   },
+   {
+    "id": "bp-flat-weights",
+    "label": "BP flat discount (1,1,1,1,1)"
+   },
+   {
+    "id": "bp-front-loaded",
+    "label": "BP front-loaded discount (1,.7,.5,.35,.25)"
+   },
+   {
+    "id": "bp-no-security",
+    "label": "BP without minutes-security multiplier"
+   },
+   {
+    "id": "bp-no-club-cap",
+    "label": "BP without the 2-per-club XI cap"
+   },
+   {
+    "id": "bp-keep-form-and-realised",
+    "label": "BP keeping form + realised goals/assists"
+   }
+  ],
+  "vsBalanced": {
+   "windows": 58,
+   "strategies": [
+    {
+     "id": "balanced",
+     "label": "Balanced",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 291.655,
+     "medianWindowPoints": 280.5,
+     "sdWindowPoints": 46.39,
+     "meanPointsPerGw": 58.331,
+     "xiPointsPerGw": 50.307,
+     "captainPointsPerGw": 8.024,
+     "captain": {
+      "meanPoints": 8.024,
+      "blankRate": 0.29,
+      "haulRate": 0.369,
+      "didNotPlayRate": 0.048,
+      "meanRankInXI": 3.548,
+      "meanRegretVsBestInXI": 5.041
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.385,
+      "meanActualPerGw": 58.331,
+      "biasPerGw": -3.946,
+      "squadMAEPerGw": 12.953,
+      "windowMAE": 35.626,
+      "playerMAE": 3.026,
+      "playerBias": -0.056
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 80.499,
+      "didNotPlayRate": 0.078,
+      "under60Rate": 0.131,
+      "autoSubsPerGw": 0.617
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.121,
+      "unusedBenchPointsPerGw": 8.707
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.624,
+      "shareOfGwsWith3Plus": 0.624
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 181,
+       "meanPoints": 57.983
+      },
+      "3-5-2": {
+       "gameweeks": 47,
+       "meanPoints": 59.468
+      },
+      "4-3-3": {
+       "gameweeks": 25,
+       "meanPoints": 62.32
+      },
+      "5-4-1": {
+       "gameweeks": 3,
+       "meanPoints": 42.333
+      },
+      "4-4-2": {
+       "gameweeks": 28,
+       "meanPoints": 55.893
+      },
+      "5-2-3": {
+       "gameweeks": 2,
+       "meanPoints": 51.5
+      },
+      "5-3-2": {
+       "gameweeks": 4,
+       "meanPoints": 68.25
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "safe",
+     "label": "Safe",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 289.017,
+     "medianWindowPoints": 288,
+     "sdWindowPoints": 43.691,
+     "meanPointsPerGw": 57.803,
+     "xiPointsPerGw": 49.855,
+     "captainPointsPerGw": 7.948,
+     "captain": {
+      "meanPoints": 7.948,
+      "blankRate": 0.293,
+      "haulRate": 0.362,
+      "didNotPlayRate": 0.045,
+      "meanRankInXI": 3.566,
+      "meanRegretVsBestInXI": 5.028
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.315,
+      "meanActualPerGw": 57.803,
+      "biasPerGw": -3.489,
+      "squadMAEPerGw": 12.74,
+      "windowMAE": 34.192,
+      "playerMAE": 2.994,
+      "playerBias": -0.002
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.232,
+      "didNotPlayRate": 0.076,
+      "under60Rate": 0.127,
+      "autoSubsPerGw": 0.617
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.341,
+      "unusedBenchPointsPerGw": 8.769
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.603,
+      "shareOfGwsWith3Plus": 0.607
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 180,
+       "meanPoints": 57.589
+      },
+      "4-3-3": {
+       "gameweeks": 27,
+       "meanPoints": 51.704
+      },
+      "3-5-2": {
+       "gameweeks": 49,
+       "meanPoints": 63.612
+      },
+      "5-4-1": {
+       "gameweeks": 3,
+       "meanPoints": 40.333
+      },
+      "4-4-2": {
+       "gameweeks": 22,
+       "meanPoints": 50.591
+      },
+      "5-3-2": {
+       "gameweeks": 6,
+       "meanPoints": 73
+      },
+      "5-2-3": {
+       "gameweeks": 3,
+       "meanPoints": 70.667
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "aggressive",
+     "label": "Aggressive",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 290.431,
+     "medianWindowPoints": 288.5,
+     "sdWindowPoints": 43.957,
+     "meanPointsPerGw": 58.086,
+     "xiPointsPerGw": 50.238,
+     "captainPointsPerGw": 7.848,
+     "captain": {
+      "meanPoints": 7.848,
+      "blankRate": 0.293,
+      "haulRate": 0.352,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.583,
+      "meanRegretVsBestInXI": 5.134
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 53.266,
+      "meanActualPerGw": 58.086,
+      "biasPerGw": -4.82,
+      "squadMAEPerGw": 12.824,
+      "windowMAE": 36.47,
+      "playerMAE": 3.021,
+      "playerBias": -0.122
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 79.692,
+      "didNotPlayRate": 0.081,
+      "under60Rate": 0.141,
+      "autoSubsPerGw": 0.666
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.424,
+      "unusedBenchPointsPerGw": 8.403
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.672,
+      "shareOfGwsWith3Plus": 0.672
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 153,
+       "meanPoints": 57.124
+      },
+      "3-5-2": {
+       "gameweeks": 71,
+       "meanPoints": 60.69
+      },
+      "4-3-3": {
+       "gameweeks": 11,
+       "meanPoints": 56.545
+      },
+      "4-4-2": {
+       "gameweeks": 36,
+       "meanPoints": 58.167
+      },
+      "4-5-1": {
+       "gameweeks": 8,
+       "meanPoints": 50.875
+      },
+      "5-4-1": {
+       "gameweeks": 4,
+       "meanPoints": 60.25
+      },
+      "5-2-3": {
+       "gameweeks": 1,
+       "meanPoints": 59
+      },
+      "5-3-2": {
+       "gameweeks": 6,
+       "meanPoints": 62.167
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "balanced-plus",
+     "label": "Balanced Plus",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 297.276,
+     "medianWindowPoints": 291,
+     "sdWindowPoints": 46.621,
+     "meanPointsPerGw": 59.455,
+     "xiPointsPerGw": 51.19,
+     "captainPointsPerGw": 8.266,
+     "captain": {
+      "meanPoints": 8.266,
+      "blankRate": 0.279,
+      "haulRate": 0.386,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.562,
+      "meanRegretVsBestInXI": 4.938
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.598,
+      "meanActualPerGw": 59.455,
+      "biasPerGw": -4.857,
+      "squadMAEPerGw": 13.475,
+      "windowMAE": 36.26,
+      "playerMAE": 3.038,
+      "playerBias": -0.082
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.261,
+      "didNotPlayRate": 0.08,
+      "under60Rate": 0.124,
+      "autoSubsPerGw": 0.672
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.59,
+      "unusedBenchPointsPerGw": 9.872
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.986,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 173,
+       "meanPoints": 59.647
+      },
+      "3-5-2": {
+       "gameweeks": 77,
+       "meanPoints": 60.844
+      },
+      "4-3-3": {
+       "gameweeks": 15,
+       "meanPoints": 55.2
+      },
+      "4-5-1": {
+       "gameweeks": 3,
+       "meanPoints": 55
+      },
+      "5-4-1": {
+       "gameweeks": 1,
+       "meanPoints": 39
+      },
+      "4-4-2": {
+       "gameweeks": 19,
+       "meanPoints": 58.158
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 50.5
+      }
+     },
+     "lineupRelaxedShare": 0.017
+    },
+    {
+     "id": "bp-flat-weights",
+     "label": "BP flat discount (1,1,1,1,1)",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 295.293,
+     "medianWindowPoints": 285,
+     "sdWindowPoints": 44.676,
+     "meanPointsPerGw": 59.059,
+     "xiPointsPerGw": 50.986,
+     "captainPointsPerGw": 8.072,
+     "captain": {
+      "meanPoints": 8.072,
+      "blankRate": 0.29,
+      "haulRate": 0.372,
+      "didNotPlayRate": 0.038,
+      "meanRankInXI": 3.562,
+      "meanRegretVsBestInXI": 5.062
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.592,
+      "meanActualPerGw": 59.059,
+      "biasPerGw": -4.467,
+      "squadMAEPerGw": 13.419,
+      "windowMAE": 31.736,
+      "playerMAE": 3.021,
+      "playerBias": -0.07
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.606,
+      "didNotPlayRate": 0.077,
+      "under60Rate": 0.121,
+      "autoSubsPerGw": 0.655
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.524,
+      "unusedBenchPointsPerGw": 10.255
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.993,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 172,
+       "meanPoints": 59.279
+      },
+      "4-3-3": {
+       "gameweeks": 17,
+       "meanPoints": 50.706
+      },
+      "3-5-2": {
+       "gameweeks": 71,
+       "meanPoints": 61.056
+      },
+      "4-5-1": {
+       "gameweeks": 2,
+       "meanPoints": 57.5
+      },
+      "4-4-2": {
+       "gameweeks": 22,
+       "meanPoints": 59.318
+      },
+      "5-3-2": {
+       "gameweeks": 4,
+       "meanPoints": 45.75
+      },
+      "5-2-3": {
+       "gameweeks": 2,
+       "meanPoints": 65.5
+      }
+     },
+     "lineupRelaxedShare": 0.017
+    },
+    {
+     "id": "bp-front-loaded",
+     "label": "BP front-loaded discount (1,.7,.5,.35,.25)",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 296.862,
+     "medianWindowPoints": 287.5,
+     "sdWindowPoints": 44.377,
+     "meanPointsPerGw": 59.372,
+     "xiPointsPerGw": 51.445,
+     "captainPointsPerGw": 7.928,
+     "captain": {
+      "meanPoints": 7.928,
+      "blankRate": 0.286,
+      "haulRate": 0.369,
+      "didNotPlayRate": 0.045,
+      "meanRankInXI": 3.714,
+      "meanRegretVsBestInXI": 5.3
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.614,
+      "meanActualPerGw": 59.372,
+      "biasPerGw": -4.759,
+      "squadMAEPerGw": 12.928,
+      "windowMAE": 33.85,
+      "playerMAE": 3.062,
+      "playerBias": -0.097
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.224,
+      "didNotPlayRate": 0.076,
+      "under60Rate": 0.125,
+      "autoSubsPerGw": 0.638
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.634,
+      "unusedBenchPointsPerGw": 9.359
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.997,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 198,
+       "meanPoints": 59.394
+      },
+      "3-5-2": {
+       "gameweeks": 62,
+       "meanPoints": 60.468
+      },
+      "4-3-3": {
+       "gameweeks": 7,
+       "meanPoints": 53.714
+      },
+      "4-5-1": {
+       "gameweeks": 3,
+       "meanPoints": 63.333
+      },
+      "5-4-1": {
+       "gameweeks": 1,
+       "meanPoints": 45
+      },
+      "4-4-2": {
+       "gameweeks": 17,
+       "meanPoints": 58.647
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 50.5
+      }
+     },
+     "lineupRelaxedShare": 0.021
+    },
+    {
+     "id": "bp-no-security",
+     "label": "BP without minutes-security multiplier",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 301.862,
+     "medianWindowPoints": 293.5,
+     "sdWindowPoints": 48.532,
+     "meanPointsPerGw": 60.372,
+     "xiPointsPerGw": 51.952,
+     "captainPointsPerGw": 8.421,
+     "captain": {
+      "meanPoints": 8.421,
+      "blankRate": 0.269,
+      "haulRate": 0.397,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.476,
+      "meanRegretVsBestInXI": 4.89
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.76,
+      "meanActualPerGw": 60.372,
+      "biasPerGw": -5.612,
+      "squadMAEPerGw": 13.449,
+      "windowMAE": 37.15,
+      "playerMAE": 3.053,
+      "playerBias": -0.107
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 80.804,
+      "didNotPlayRate": 0.081,
+      "under60Rate": 0.13,
+      "autoSubsPerGw": 0.683
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.914,
+      "unusedBenchPointsPerGw": 9.731
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.986,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 180,
+       "meanPoints": 62.839
+      },
+      "3-5-2": {
+       "gameweeks": 57,
+       "meanPoints": 60.123
+      },
+      "4-4-2": {
+       "gameweeks": 26,
+       "meanPoints": 54.615
+      },
+      "4-3-3": {
+       "gameweeks": 22,
+       "meanPoints": 50.727
+      },
+      "5-4-1": {
+       "gameweeks": 2,
+       "meanPoints": 39.5
+      },
+      "4-5-1": {
+       "gameweeks": 1,
+       "meanPoints": 65
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 45
+      }
+     },
+     "lineupRelaxedShare": 0.024
+    },
+    {
+     "id": "bp-no-club-cap",
+     "label": "BP without the 2-per-club XI cap",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 295.966,
+     "medianWindowPoints": 294,
+     "sdWindowPoints": 45.427,
+     "meanPointsPerGw": 59.193,
+     "xiPointsPerGw": 51.083,
+     "captainPointsPerGw": 8.11,
+     "captain": {
+      "meanPoints": 8.11,
+      "blankRate": 0.283,
+      "haulRate": 0.379,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.583,
+      "meanRegretVsBestInXI": 5.066
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.971,
+      "meanActualPerGw": 59.193,
+      "biasPerGw": -4.222,
+      "squadMAEPerGw": 13.089,
+      "windowMAE": 33.671,
+      "playerMAE": 3.048,
+      "playerBias": -0.036
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.775,
+      "didNotPlayRate": 0.078,
+      "under60Rate": 0.125,
+      "autoSubsPerGw": 0.672
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.607,
+      "unusedBenchPointsPerGw": 10.09
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.534,
+      "shareOfGwsWith3Plus": 0.545
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 164,
+       "meanPoints": 58.884
+      },
+      "3-5-2": {
+       "gameweeks": 75,
+       "meanPoints": 63.36
+      },
+      "4-4-2": {
+       "gameweeks": 24,
+       "meanPoints": 57.125
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 54
+      },
+      "5-4-1": {
+       "gameweeks": 3,
+       "meanPoints": 47.667
+      },
+      "4-3-3": {
+       "gameweeks": 16,
+       "meanPoints": 51
+      },
+      "4-5-1": {
+       "gameweeks": 1,
+       "meanPoints": 65
+      },
+      "5-2-3": {
+       "gameweeks": 5,
+       "meanPoints": 50.8
+      }
+     },
+     "lineupRelaxedShare": 0.017
+    },
+    {
+     "id": "bp-keep-form-and-realised",
+     "label": "BP keeping form + realised goals/assists",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 300.362,
+     "medianWindowPoints": 291.5,
+     "sdWindowPoints": 47.422,
+     "meanPointsPerGw": 60.072,
+     "xiPointsPerGw": 51.676,
+     "captainPointsPerGw": 8.397,
+     "captain": {
+      "meanPoints": 8.397,
+      "blankRate": 0.272,
+      "haulRate": 0.397,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.538,
+      "meanRegretVsBestInXI": 5.003
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.813,
+      "meanActualPerGw": 60.072,
+      "biasPerGw": -5.259,
+      "squadMAEPerGw": 13.227,
+      "windowMAE": 38.002,
+      "playerMAE": 3.061,
+      "playerBias": -0.098
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.57,
+      "didNotPlayRate": 0.078,
+      "under60Rate": 0.119,
+      "autoSubsPerGw": 0.707
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.686,
+      "unusedBenchPointsPerGw": 9.834
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.99,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 195,
+       "meanPoints": 60.646
+      },
+      "3-5-2": {
+       "gameweeks": 68,
+       "meanPoints": 61.044
+      },
+      "5-4-1": {
+       "gameweeks": 1,
+       "meanPoints": 33
+      },
+      "4-4-2": {
+       "gameweeks": 7,
+       "meanPoints": 46.714
+      },
+      "4-3-3": {
+       "gameweeks": 17,
+       "meanPoints": 57.941
+      },
+      "5-2-3": {
+       "gameweeks": 2,
+       "meanPoints": 49.5
+      }
+     },
+     "lineupRelaxedShare": 0.021
+    }
+   ],
+   "windowResults": {
+    "balanced": {
+     "sharedWinPct": 12.931,
+     "outrightWinPct": 10.345,
+     "averageRank": 5.086
+    },
+    "safe": {
+     "sharedWinPct": 5.172,
+     "outrightWinPct": 3.448,
+     "averageRank": 5.672
+    },
+    "aggressive": {
+     "sharedWinPct": 16.379,
+     "outrightWinPct": 13.793,
+     "averageRank": 5.81
+    },
+    "balanced-plus": {
+     "sharedWinPct": 4.598,
+     "outrightWinPct": 1.724,
+     "averageRank": 4.94
+    },
+    "bp-flat-weights": {
+     "sharedWinPct": 7.184,
+     "outrightWinPct": 3.448,
+     "averageRank": 4.966
+    },
+    "bp-front-loaded": {
+     "sharedWinPct": 13.793,
+     "outrightWinPct": 12.069,
+     "averageRank": 4.491
+    },
+    "bp-no-security": {
+     "sharedWinPct": 14.655,
+     "outrightWinPct": 12.069,
+     "averageRank": 4.534
+    },
+    "bp-no-club-cap": {
+     "sharedWinPct": 7.471,
+     "outrightWinPct": 6.897,
+     "averageRank": 5.353
+    },
+    "bp-keep-form-and-realised": {
+     "sharedWinPct": 17.816,
+     "outrightWinPct": 15.517,
+     "averageRank": 4.147
+    }
+   },
+   "pairedVsBaseline": {
+    "safe": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -2.638,
+     "medianDiff": -1.5,
+     "sdDiff": 15.352,
+     "varianceDiff": 235.674,
+     "tCI95NonOverlapping": [
+      -17.036,
+      1.369
+     ],
+     "blockBootstrapCI95": [
+      -6.241,
+      1.707
+     ],
+     "signTest": {
+      "wins": 4,
+      "losses": 8,
+      "ties": 0,
+      "p": 0.3876953125
+     },
+     "effectSize": -0.172,
+     "evidence": "no-evidence-of-difference"
+    },
+    "aggressive": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -1.224,
+     "medianDiff": -3.5,
+     "sdDiff": 23.291,
+     "varianceDiff": 542.458,
+     "tCI95NonOverlapping": [
+      -6.436,
+      19.269
+     ],
+     "blockBootstrapCI95": [
+      -6.672,
+      6.379
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 4,
+      "ties": 1,
+      "p": 0.548828125
+     },
+     "effectSize": -0.053,
+     "evidence": "no-evidence-of-difference"
+    },
+    "balanced-plus": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 5.621,
+     "medianDiff": -1.5,
+     "sdDiff": 33.599,
+     "varianceDiff": 1128.871,
+     "tCI95NonOverlapping": [
+      -19.678,
+      26.011
+     ],
+     "blockBootstrapCI95": [
+      -2.138,
+      15.328
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 5,
+      "ties": 0,
+      "p": 0.7744140625
+     },
+     "effectSize": 0.167,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-flat-weights": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 3.638,
+     "medianDiff": 0.5,
+     "sdDiff": 34.468,
+     "varianceDiff": 1188.06,
+     "tCI95NonOverlapping": [
+      -22.247,
+      11.914
+     ],
+     "blockBootstrapCI95": [
+      -4.879,
+      12.552
+     ],
+     "signTest": {
+      "wins": 6,
+      "losses": 6,
+      "ties": 0,
+      "p": 1
+     },
+     "effectSize": 0.106,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-front-loaded": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 5.207,
+     "medianDiff": 6,
+     "sdDiff": 30.498,
+     "varianceDiff": 930.132,
+     "tCI95NonOverlapping": [
+      -16.451,
+      24.118
+     ],
+     "blockBootstrapCI95": [
+      -0.862,
+      14.517
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 5,
+      "ties": 0,
+      "p": 0.7744140625
+     },
+     "effectSize": 0.171,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-no-security": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 10.207,
+     "medianDiff": 9,
+     "sdDiff": 30.88,
+     "varianceDiff": 953.57,
+     "tCI95NonOverlapping": [
+      -17.166,
+      27.166
+     ],
+     "blockBootstrapCI95": [
+      3.776,
+      20.966
+     ],
+     "signTest": {
+      "wins": 6,
+      "losses": 5,
+      "ties": 1,
+      "p": 1
+     },
+     "effectSize": 0.331,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-no-club-cap": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 4.31,
+     "medianDiff": -3,
+     "sdDiff": 33.147,
+     "varianceDiff": 1098.744,
+     "tCI95NonOverlapping": [
+      -16.659,
+      26.659
+     ],
+     "blockBootstrapCI95": [
+      -3.069,
+      14
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 5,
+      "ties": 0,
+      "p": 0.7744140625
+     },
+     "effectSize": 0.13,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-keep-form-and-realised": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 8.707,
+     "medianDiff": 6,
+     "sdDiff": 31.963,
+     "varianceDiff": 1021.649,
+     "tCI95NonOverlapping": [
+      -12.213,
+      21.379
+     ],
+     "blockBootstrapCI95": [
+      2.983,
+      17.069
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 5,
+      "ties": 0,
+      "p": 0.7744140625
+     },
+     "effectSize": 0.272,
+     "evidence": "no-evidence-of-difference"
+    }
+   },
+   "rotation": {
+    "medianRotationIndex": 0.23,
+    "high": {
+     "balanced": {
+      "n": 29,
+      "meanWindowPoints": 292.172,
+      "diffVsBaseline": 0
+     },
+     "safe": {
+      "n": 29,
+      "meanWindowPoints": 289.862,
+      "diffVsBaseline": -2.31
+     },
+     "aggressive": {
+      "n": 29,
+      "meanWindowPoints": 284.31,
+      "diffVsBaseline": -7.862
+     },
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 290.379,
+      "diffVsBaseline": -1.793
+     },
+     "bp-flat-weights": {
+      "n": 29,
+      "meanWindowPoints": 284,
+      "diffVsBaseline": -8.172
+     },
+     "bp-front-loaded": {
+      "n": 29,
+      "meanWindowPoints": 289.448,
+      "diffVsBaseline": -2.724
+     },
+     "bp-no-security": {
+      "n": 29,
+      "meanWindowPoints": 296.828,
+      "diffVsBaseline": 4.655
+     },
+     "bp-no-club-cap": {
+      "n": 29,
+      "meanWindowPoints": 289.621,
+      "diffVsBaseline": -2.552
+     },
+     "bp-keep-form-and-realised": {
+      "n": 29,
+      "meanWindowPoints": 295.828,
+      "diffVsBaseline": 3.655
+     }
+    },
+    "low": {
+     "balanced": {
+      "n": 29,
+      "meanWindowPoints": 291.138,
+      "diffVsBaseline": 0
+     },
+     "safe": {
+      "n": 29,
+      "meanWindowPoints": 288.172,
+      "diffVsBaseline": -2.966
+     },
+     "aggressive": {
+      "n": 29,
+      "meanWindowPoints": 296.552,
+      "diffVsBaseline": 5.414
+     },
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 304.172,
+      "diffVsBaseline": 13.034
+     },
+     "bp-flat-weights": {
+      "n": 29,
+      "meanWindowPoints": 306.586,
+      "diffVsBaseline": 15.448
+     },
+     "bp-front-loaded": {
+      "n": 29,
+      "meanWindowPoints": 304.276,
+      "diffVsBaseline": 13.138
+     },
+     "bp-no-security": {
+      "n": 29,
+      "meanWindowPoints": 306.897,
+      "diffVsBaseline": 15.759
+     },
+     "bp-no-club-cap": {
+      "n": 29,
+      "meanWindowPoints": 302.31,
+      "diffVsBaseline": 11.172
+     },
+     "bp-keep-form-and-realised": {
+      "n": 29,
+      "meanWindowPoints": 304.897,
+      "diffVsBaseline": 13.759
+     }
+    }
+   }
+  },
+  "vsBalancedPlus": {
+   "windows": 58,
+   "strategies": [
+    {
+     "id": "balanced-plus",
+     "label": "Balanced Plus",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 297.276,
+     "medianWindowPoints": 291,
+     "sdWindowPoints": 46.621,
+     "meanPointsPerGw": 59.455,
+     "xiPointsPerGw": 51.19,
+     "captainPointsPerGw": 8.266,
+     "captain": {
+      "meanPoints": 8.266,
+      "blankRate": 0.279,
+      "haulRate": 0.386,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.562,
+      "meanRegretVsBestInXI": 4.938
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.598,
+      "meanActualPerGw": 59.455,
+      "biasPerGw": -4.857,
+      "squadMAEPerGw": 13.475,
+      "windowMAE": 36.26,
+      "playerMAE": 3.038,
+      "playerBias": -0.082
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.261,
+      "didNotPlayRate": 0.08,
+      "under60Rate": 0.124,
+      "autoSubsPerGw": 0.672
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.59,
+      "unusedBenchPointsPerGw": 9.872
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.986,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 173,
+       "meanPoints": 59.647
+      },
+      "3-5-2": {
+       "gameweeks": 77,
+       "meanPoints": 60.844
+      },
+      "4-3-3": {
+       "gameweeks": 15,
+       "meanPoints": 55.2
+      },
+      "4-5-1": {
+       "gameweeks": 3,
+       "meanPoints": 55
+      },
+      "5-4-1": {
+       "gameweeks": 1,
+       "meanPoints": 39
+      },
+      "4-4-2": {
+       "gameweeks": 19,
+       "meanPoints": 58.158
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 50.5
+      }
+     },
+     "lineupRelaxedShare": 0.017
+    },
+    {
+     "id": "bp-flat-weights",
+     "label": "BP flat discount (1,1,1,1,1)",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 295.293,
+     "medianWindowPoints": 285,
+     "sdWindowPoints": 44.676,
+     "meanPointsPerGw": 59.059,
+     "xiPointsPerGw": 50.986,
+     "captainPointsPerGw": 8.072,
+     "captain": {
+      "meanPoints": 8.072,
+      "blankRate": 0.29,
+      "haulRate": 0.372,
+      "didNotPlayRate": 0.038,
+      "meanRankInXI": 3.562,
+      "meanRegretVsBestInXI": 5.062
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.592,
+      "meanActualPerGw": 59.059,
+      "biasPerGw": -4.467,
+      "squadMAEPerGw": 13.419,
+      "windowMAE": 31.736,
+      "playerMAE": 3.021,
+      "playerBias": -0.07
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.606,
+      "didNotPlayRate": 0.077,
+      "under60Rate": 0.121,
+      "autoSubsPerGw": 0.655
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.524,
+      "unusedBenchPointsPerGw": 10.255
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.993,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 172,
+       "meanPoints": 59.279
+      },
+      "4-3-3": {
+       "gameweeks": 17,
+       "meanPoints": 50.706
+      },
+      "3-5-2": {
+       "gameweeks": 71,
+       "meanPoints": 61.056
+      },
+      "4-5-1": {
+       "gameweeks": 2,
+       "meanPoints": 57.5
+      },
+      "4-4-2": {
+       "gameweeks": 22,
+       "meanPoints": 59.318
+      },
+      "5-3-2": {
+       "gameweeks": 4,
+       "meanPoints": 45.75
+      },
+      "5-2-3": {
+       "gameweeks": 2,
+       "meanPoints": 65.5
+      }
+     },
+     "lineupRelaxedShare": 0.017
+    },
+    {
+     "id": "bp-front-loaded",
+     "label": "BP front-loaded discount (1,.7,.5,.35,.25)",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 296.862,
+     "medianWindowPoints": 287.5,
+     "sdWindowPoints": 44.377,
+     "meanPointsPerGw": 59.372,
+     "xiPointsPerGw": 51.445,
+     "captainPointsPerGw": 7.928,
+     "captain": {
+      "meanPoints": 7.928,
+      "blankRate": 0.286,
+      "haulRate": 0.369,
+      "didNotPlayRate": 0.045,
+      "meanRankInXI": 3.714,
+      "meanRegretVsBestInXI": 5.3
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.614,
+      "meanActualPerGw": 59.372,
+      "biasPerGw": -4.759,
+      "squadMAEPerGw": 12.928,
+      "windowMAE": 33.85,
+      "playerMAE": 3.062,
+      "playerBias": -0.097
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.224,
+      "didNotPlayRate": 0.076,
+      "under60Rate": 0.125,
+      "autoSubsPerGw": 0.638
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.634,
+      "unusedBenchPointsPerGw": 9.359
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.997,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 198,
+       "meanPoints": 59.394
+      },
+      "3-5-2": {
+       "gameweeks": 62,
+       "meanPoints": 60.468
+      },
+      "4-3-3": {
+       "gameweeks": 7,
+       "meanPoints": 53.714
+      },
+      "4-5-1": {
+       "gameweeks": 3,
+       "meanPoints": 63.333
+      },
+      "5-4-1": {
+       "gameweeks": 1,
+       "meanPoints": 45
+      },
+      "4-4-2": {
+       "gameweeks": 17,
+       "meanPoints": 58.647
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 50.5
+      }
+     },
+     "lineupRelaxedShare": 0.021
+    },
+    {
+     "id": "bp-no-security",
+     "label": "BP without minutes-security multiplier",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 301.862,
+     "medianWindowPoints": 293.5,
+     "sdWindowPoints": 48.532,
+     "meanPointsPerGw": 60.372,
+     "xiPointsPerGw": 51.952,
+     "captainPointsPerGw": 8.421,
+     "captain": {
+      "meanPoints": 8.421,
+      "blankRate": 0.269,
+      "haulRate": 0.397,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.476,
+      "meanRegretVsBestInXI": 4.89
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.76,
+      "meanActualPerGw": 60.372,
+      "biasPerGw": -5.612,
+      "squadMAEPerGw": 13.449,
+      "windowMAE": 37.15,
+      "playerMAE": 3.053,
+      "playerBias": -0.107
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 80.804,
+      "didNotPlayRate": 0.081,
+      "under60Rate": 0.13,
+      "autoSubsPerGw": 0.683
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.914,
+      "unusedBenchPointsPerGw": 9.731
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.986,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 180,
+       "meanPoints": 62.839
+      },
+      "3-5-2": {
+       "gameweeks": 57,
+       "meanPoints": 60.123
+      },
+      "4-4-2": {
+       "gameweeks": 26,
+       "meanPoints": 54.615
+      },
+      "4-3-3": {
+       "gameweeks": 22,
+       "meanPoints": 50.727
+      },
+      "5-4-1": {
+       "gameweeks": 2,
+       "meanPoints": 39.5
+      },
+      "4-5-1": {
+       "gameweeks": 1,
+       "meanPoints": 65
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 45
+      }
+     },
+     "lineupRelaxedShare": 0.024
+    },
+    {
+     "id": "bp-no-club-cap",
+     "label": "BP without the 2-per-club XI cap",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 295.966,
+     "medianWindowPoints": 294,
+     "sdWindowPoints": 45.427,
+     "meanPointsPerGw": 59.193,
+     "xiPointsPerGw": 51.083,
+     "captainPointsPerGw": 8.11,
+     "captain": {
+      "meanPoints": 8.11,
+      "blankRate": 0.283,
+      "haulRate": 0.379,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.583,
+      "meanRegretVsBestInXI": 5.066
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.971,
+      "meanActualPerGw": 59.193,
+      "biasPerGw": -4.222,
+      "squadMAEPerGw": 13.089,
+      "windowMAE": 33.671,
+      "playerMAE": 3.048,
+      "playerBias": -0.036
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.775,
+      "didNotPlayRate": 0.078,
+      "under60Rate": 0.125,
+      "autoSubsPerGw": 0.672
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.607,
+      "unusedBenchPointsPerGw": 10.09
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.534,
+      "shareOfGwsWith3Plus": 0.545
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 164,
+       "meanPoints": 58.884
+      },
+      "3-5-2": {
+       "gameweeks": 75,
+       "meanPoints": 63.36
+      },
+      "4-4-2": {
+       "gameweeks": 24,
+       "meanPoints": 57.125
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 54
+      },
+      "5-4-1": {
+       "gameweeks": 3,
+       "meanPoints": 47.667
+      },
+      "4-3-3": {
+       "gameweeks": 16,
+       "meanPoints": 51
+      },
+      "4-5-1": {
+       "gameweeks": 1,
+       "meanPoints": 65
+      },
+      "5-2-3": {
+       "gameweeks": 5,
+       "meanPoints": 50.8
+      }
+     },
+     "lineupRelaxedShare": 0.017
+    },
+    {
+     "id": "bp-keep-form-and-realised",
+     "label": "BP keeping form + realised goals/assists",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 300.362,
+     "medianWindowPoints": 291.5,
+     "sdWindowPoints": 47.422,
+     "meanPointsPerGw": 60.072,
+     "xiPointsPerGw": 51.676,
+     "captainPointsPerGw": 8.397,
+     "captain": {
+      "meanPoints": 8.397,
+      "blankRate": 0.272,
+      "haulRate": 0.397,
+      "didNotPlayRate": 0.041,
+      "meanRankInXI": 3.538,
+      "meanRegretVsBestInXI": 5.003
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.813,
+      "meanActualPerGw": 60.072,
+      "biasPerGw": -5.259,
+      "squadMAEPerGw": 13.227,
+      "windowMAE": 38.002,
+      "playerMAE": 3.061,
+      "playerBias": -0.098
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 81.57,
+      "didNotPlayRate": 0.078,
+      "under60Rate": 0.119,
+      "autoSubsPerGw": 0.707
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.686,
+      "unusedBenchPointsPerGw": 9.834
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.99,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 195,
+       "meanPoints": 60.646
+      },
+      "3-5-2": {
+       "gameweeks": 68,
+       "meanPoints": 61.044
+      },
+      "5-4-1": {
+       "gameweeks": 1,
+       "meanPoints": 33
+      },
+      "4-4-2": {
+       "gameweeks": 7,
+       "meanPoints": 46.714
+      },
+      "4-3-3": {
+       "gameweeks": 17,
+       "meanPoints": 57.941
+      },
+      "5-2-3": {
+       "gameweeks": 2,
+       "meanPoints": 49.5
+      }
+     },
+     "lineupRelaxedShare": 0.021
+    }
+   ],
+   "windowResults": {
+    "balanced-plus": {
+     "sharedWinPct": 9.052,
+     "outrightWinPct": 5.172,
+     "averageRank": 3.603
+    },
+    "bp-flat-weights": {
+     "sharedWinPct": 9.052,
+     "outrightWinPct": 3.448,
+     "averageRank": 3.664
+    },
+    "bp-front-loaded": {
+     "sharedWinPct": 19.971,
+     "outrightWinPct": 17.241,
+     "averageRank": 3.353
+    },
+    "bp-no-security": {
+     "sharedWinPct": 21.552,
+     "outrightWinPct": 18.966,
+     "averageRank": 3.362
+    },
+    "bp-no-club-cap": {
+     "sharedWinPct": 7.902,
+     "outrightWinPct": 6.897,
+     "averageRank": 3.914
+    },
+    "bp-keep-form-and-realised": {
+     "sharedWinPct": 32.471,
+     "outrightWinPct": 31.034,
+     "averageRank": 3.103
+    }
+   },
+   "pairedVsBaseline": {
+    "bp-flat-weights": {
+     "vs": "balanced-plus",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -1.983,
+     "medianDiff": 0,
+     "sdDiff": 22.504,
+     "varianceDiff": 506.438,
+     "tCI95NonOverlapping": [
+      -30.327,
+      13.661
+     ],
+     "blockBootstrapCI95": [
+      -11.069,
+      3.793
+     ],
+     "signTest": {
+      "wins": 3,
+      "losses": 5,
+      "ties": 4,
+      "p": 0.7265625
+     },
+     "effectSize": -0.088,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-front-loaded": {
+     "vs": "balanced-plus",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -0.414,
+     "medianDiff": 0,
+     "sdDiff": 19.386,
+     "varianceDiff": 375.826,
+     "tCI95NonOverlapping": [
+      -9.215,
+      10.548
+     ],
+     "blockBootstrapCI95": [
+      -6.276,
+      5.845
+     ],
+     "signTest": {
+      "wins": 5,
+      "losses": 4,
+      "ties": 3,
+      "p": 1
+     },
+     "effectSize": -0.021,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-no-security": {
+     "vs": "balanced-plus",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 4.586,
+     "medianDiff": 0,
+     "sdDiff": 20.502,
+     "varianceDiff": 420.352,
+     "tCI95NonOverlapping": [
+      -14.302,
+      17.968
+     ],
+     "blockBootstrapCI95": [
+      0.741,
+      11.276
+     ],
+     "signTest": {
+      "wins": 5,
+      "losses": 6,
+      "ties": 1,
+      "p": 1
+     },
+     "effectSize": 0.224,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-no-club-cap": {
+     "vs": "balanced-plus",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -1.31,
+     "medianDiff": 0,
+     "sdDiff": 10.753,
+     "varianceDiff": 115.621,
+     "tCI95NonOverlapping": [
+      -7.346,
+      11.012
+     ],
+     "blockBootstrapCI95": [
+      -3.241,
+      0.793
+     ],
+     "signTest": {
+      "wins": 4,
+      "losses": 5,
+      "ties": 3,
+      "p": 1
+     },
+     "effectSize": -0.122,
+     "evidence": "no-evidence-of-difference"
+    },
+    "bp-keep-form-and-realised": {
+     "vs": "balanced-plus",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 3.086,
+     "medianDiff": 2.5,
+     "sdDiff": 21.625,
+     "varianceDiff": 467.659,
+     "tCI95NonOverlapping": [
+      -10.288,
+      13.121
+     ],
+     "blockBootstrapCI95": [
+      -0.966,
+      8.241
+     ],
+     "signTest": {
+      "wins": 6,
+      "losses": 5,
+      "ties": 1,
+      "p": 1
+     },
+     "effectSize": 0.143,
+     "evidence": "no-evidence-of-difference"
+    }
+   },
+   "rotation": {
+    "medianRotationIndex": 0.23,
+    "high": {
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 290.379,
+      "diffVsBaseline": 0
+     },
+     "bp-flat-weights": {
+      "n": 29,
+      "meanWindowPoints": 284,
+      "diffVsBaseline": -6.379
+     },
+     "bp-front-loaded": {
+      "n": 29,
+      "meanWindowPoints": 289.448,
+      "diffVsBaseline": -0.931
+     },
+     "bp-no-security": {
+      "n": 29,
+      "meanWindowPoints": 296.828,
+      "diffVsBaseline": 6.448
+     },
+     "bp-no-club-cap": {
+      "n": 29,
+      "meanWindowPoints": 289.621,
+      "diffVsBaseline": -0.759
+     },
+     "bp-keep-form-and-realised": {
+      "n": 29,
+      "meanWindowPoints": 295.828,
+      "diffVsBaseline": 5.448
+     }
+    },
+    "low": {
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 304.172,
+      "diffVsBaseline": 0
+     },
+     "bp-flat-weights": {
+      "n": 29,
+      "meanWindowPoints": 306.586,
+      "diffVsBaseline": 2.414
+     },
+     "bp-front-loaded": {
+      "n": 29,
+      "meanWindowPoints": 304.276,
+      "diffVsBaseline": 0.103
+     },
+     "bp-no-security": {
+      "n": 29,
+      "meanWindowPoints": 306.897,
+      "diffVsBaseline": 2.724
+     },
+     "bp-no-club-cap": {
+      "n": 29,
+      "meanWindowPoints": 302.31,
+      "diffVsBaseline": -1.862
+     },
+     "bp-keep-form-and-realised": {
+      "n": 29,
+      "meanWindowPoints": 304.897,
+      "diffVsBaseline": 0.724
+     }
+    }
+   }
+  },
+  "availabilityProxyOff": {
+   "windows": 58,
+   "strategies": [
+    {
+     "id": "balanced",
+     "label": "Balanced",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 290.293,
+     "medianWindowPoints": 285,
+     "sdWindowPoints": 49.138,
+     "meanPointsPerGw": 58.059,
+     "xiPointsPerGw": 50.017,
+     "captainPointsPerGw": 8.041,
+     "captain": {
+      "meanPoints": 8.041,
+      "blankRate": 0.29,
+      "haulRate": 0.376,
+      "didNotPlayRate": 0.059,
+      "meanRankInXI": 3.569,
+      "meanRegretVsBestInXI": 5.072
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.706,
+      "meanActualPerGw": 58.059,
+      "biasPerGw": -3.353,
+      "squadMAEPerGw": 13.135,
+      "windowMAE": 37.573,
+      "playerMAE": 3.067,
+      "playerBias": 0.035
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 78.701,
+      "didNotPlayRate": 0.097,
+      "under60Rate": 0.152,
+      "autoSubsPerGw": 0.748
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.538,
+      "unusedBenchPointsPerGw": 9
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.645,
+      "shareOfGwsWith3Plus": 0.645
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 194,
+       "meanPoints": 58.139
+      },
+      "3-5-2": {
+       "gameweeks": 42,
+       "meanPoints": 58.786
+      },
+      "4-3-3": {
+       "gameweeks": 33,
+       "meanPoints": 56.394
+      },
+      "5-3-2": {
+       "gameweeks": 5,
+       "meanPoints": 61
+      },
+      "4-4-2": {
+       "gameweeks": 14,
+       "meanPoints": 58.571
+      },
+      "5-2-3": {
+       "gameweeks": 2,
+       "meanPoints": 51.5
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "safe",
+     "label": "Safe",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 289.086,
+     "medianWindowPoints": 286.5,
+     "sdWindowPoints": 46.627,
+     "meanPointsPerGw": 57.817,
+     "xiPointsPerGw": 49.852,
+     "captainPointsPerGw": 7.966,
+     "captain": {
+      "meanPoints": 7.966,
+      "blankRate": 0.293,
+      "haulRate": 0.369,
+      "didNotPlayRate": 0.055,
+      "meanRankInXI": 3.593,
+      "meanRegretVsBestInXI": 5.052
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.689,
+      "meanActualPerGw": 57.817,
+      "biasPerGw": -3.128,
+      "squadMAEPerGw": 13.098,
+      "windowMAE": 36.957,
+      "playerMAE": 3.033,
+      "playerBias": 0.075
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 79.752,
+      "didNotPlayRate": 0.092,
+      "under60Rate": 0.143,
+      "autoSubsPerGw": 0.734
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.841,
+      "unusedBenchPointsPerGw": 8.945
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.59,
+      "shareOfGwsWith3Plus": 0.593
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 193,
+       "meanPoints": 57.482
+      },
+      "4-3-3": {
+       "gameweeks": 32,
+       "meanPoints": 49.906
+      },
+      "3-5-2": {
+       "gameweeks": 42,
+       "meanPoints": 65.548
+      },
+      "4-4-2": {
+       "gameweeks": 15,
+       "meanPoints": 48.6
+      },
+      "5-2-3": {
+       "gameweeks": 3,
+       "meanPoints": 70.667
+      },
+      "5-3-2": {
+       "gameweeks": 5,
+       "meanPoints": 76.4
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "aggressive",
+     "label": "Aggressive",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 288.603,
+     "medianWindowPoints": 288.5,
+     "sdWindowPoints": 46.188,
+     "meanPointsPerGw": 57.721,
+     "xiPointsPerGw": 49.907,
+     "captainPointsPerGw": 7.814,
+     "captain": {
+      "meanPoints": 7.814,
+      "blankRate": 0.29,
+      "haulRate": 0.348,
+      "didNotPlayRate": 0.055,
+      "meanRankInXI": 3.61,
+      "meanRegretVsBestInXI": 5.093
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 53.618,
+      "meanActualPerGw": 57.721,
+      "biasPerGw": -4.102,
+      "squadMAEPerGw": 12.989,
+      "windowMAE": 37.985,
+      "playerMAE": 3.056,
+      "playerBias": -0.014
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 77.836,
+      "didNotPlayRate": 0.099,
+      "under60Rate": 0.161,
+      "autoSubsPerGw": 0.841
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.941,
+      "unusedBenchPointsPerGw": 8.5
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 2.648,
+      "shareOfGwsWith3Plus": 0.648
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 164,
+       "meanPoints": 56.11
+      },
+      "3-5-2": {
+       "gameweeks": 70,
+       "meanPoints": 61.1
+      },
+      "4-3-3": {
+       "gameweeks": 11,
+       "meanPoints": 53.364
+      },
+      "4-4-2": {
+       "gameweeks": 33,
+       "meanPoints": 59.515
+      },
+      "5-4-1": {
+       "gameweeks": 2,
+       "meanPoints": 68
+      },
+      "4-5-1": {
+       "gameweeks": 3,
+       "meanPoints": 48.333
+      },
+      "5-2-3": {
+       "gameweeks": 1,
+       "meanPoints": 59
+      },
+      "5-3-2": {
+       "gameweeks": 6,
+       "meanPoints": 61.5
+      }
+     },
+     "lineupRelaxedShare": 0
+    },
+    {
+     "id": "balanced-plus",
+     "label": "Balanced Plus",
+     "windows": 58,
+     "gameweeks": 290,
+     "meanWindowPoints": 298.207,
+     "medianWindowPoints": 291,
+     "sdWindowPoints": 46.722,
+     "meanPointsPerGw": 59.641,
+     "xiPointsPerGw": 51.345,
+     "captainPointsPerGw": 8.297,
+     "captain": {
+      "meanPoints": 8.297,
+      "blankRate": 0.279,
+      "haulRate": 0.393,
+      "didNotPlayRate": 0.045,
+      "meanRankInXI": 3.552,
+      "meanRegretVsBestInXI": 4.948
+     },
+     "projectedVsActual": {
+      "meanProjectedPerGw": 54.926,
+      "meanActualPerGw": 59.641,
+      "biasPerGw": -4.715,
+      "squadMAEPerGw": 13.365,
+      "windowMAE": 37.884,
+      "playerMAE": 3.071,
+      "playerBias": -0.033
+     },
+     "startingXI": {
+      "meanMinutesPerStarter": 80.516,
+      "didNotPlayRate": 0.089,
+      "under60Rate": 0.132,
+      "autoSubsPerGw": 0.772
+     },
+     "bench": {
+      "pointsAddedByAutoSubsPerGw": 2.972,
+      "unusedBenchPointsPerGw": 9.5
+     },
+     "clubConcentration": {
+      "meanMaxFromOneClubInXI": 1.986,
+      "shareOfGwsWith3Plus": 0
+     },
+     "byFormation": {
+      "3-4-3": {
+       "gameweeks": 192,
+       "meanPoints": 59.115
+      },
+      "3-5-2": {
+       "gameweeks": 63,
+       "meanPoints": 63.063
+      },
+      "4-3-3": {
+       "gameweeks": 10,
+       "meanPoints": 54
+      },
+      "5-3-2": {
+       "gameweeks": 2,
+       "meanPoints": 50.5
+      },
+      "4-4-2": {
+       "gameweeks": 21,
+       "meanPoints": 57.238
+      },
+      "4-5-1": {
+       "gameweeks": 2,
+       "meanPoints": 65
+      }
+     },
+     "lineupRelaxedShare": 0
+    }
+   ],
+   "windowResults": {
+    "balanced": {
+     "sharedWinPct": 21.264,
+     "outrightWinPct": 17.241,
+     "averageRank": 2.422
+    },
+    "safe": {
+     "sharedWinPct": 13.506,
+     "outrightWinPct": 10.345,
+     "averageRank": 2.543
+    },
+    "aggressive": {
+     "sharedWinPct": 23.276,
+     "outrightWinPct": 22.414,
+     "averageRank": 2.681
+    },
+    "balanced-plus": {
+     "sharedWinPct": 41.954,
+     "outrightWinPct": 41.379,
+     "averageRank": 2.353
+    }
+   },
+   "pairedVsBaseline": {
+    "safe": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -1.207,
+     "medianDiff": 0,
+     "sdDiff": 16.853,
+     "varianceDiff": 284.027,
+     "tCI95NonOverlapping": [
+      -15.983,
+      8.149
+     ],
+     "blockBootstrapCI95": [
+      -5.328,
+      3.69
+     ],
+     "signTest": {
+      "wins": 5,
+      "losses": 7,
+      "ties": 0,
+      "p": 0.7744140625
+     },
+     "effectSize": -0.072,
+     "evidence": "no-evidence-of-difference"
+    },
+    "aggressive": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": -1.69,
+     "medianDiff": -4.5,
+     "sdDiff": 22.842,
+     "varianceDiff": 521.762,
+     "tCI95NonOverlapping": [
+      -8.047,
+      16.881
+     ],
+     "blockBootstrapCI95": [
+      -8.19,
+      5.759
+     ],
+     "signTest": {
+      "wins": 7,
+      "losses": 5,
+      "ties": 0,
+      "p": 0.7744140625
+     },
+     "effectSize": -0.074,
+     "evidence": "no-evidence-of-difference"
+    },
+    "balanced-plus": {
+     "vs": "balanced",
+     "nWindows": 58,
+     "nNonOverlapping": 12,
+     "meanDiff": 7.914,
+     "medianDiff": 5,
+     "sdDiff": 34.193,
+     "varianceDiff": 1169.133,
+     "tCI95NonOverlapping": [
+      -17.877,
+      24.71
+     ],
+     "blockBootstrapCI95": [
+      -1.414,
+      17.345
+     ],
+     "signTest": {
+      "wins": 6,
+      "losses": 6,
+      "ties": 0,
+      "p": 1
+     },
+     "effectSize": 0.231,
+     "evidence": "no-evidence-of-difference"
+    }
+   },
+   "rotation": {
+    "medianRotationIndex": 0.23,
+    "high": {
+     "balanced": {
+      "n": 29,
+      "meanWindowPoints": 288.276,
+      "diffVsBaseline": 0
+     },
+     "safe": {
+      "n": 29,
+      "meanWindowPoints": 288.655,
+      "diffVsBaseline": 0.379
+     },
+     "aggressive": {
+      "n": 29,
+      "meanWindowPoints": 282.069,
+      "diffVsBaseline": -6.207
+     },
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 291.724,
+      "diffVsBaseline": 3.448
+     }
+    },
+    "low": {
+     "balanced": {
+      "n": 29,
+      "meanWindowPoints": 292.31,
+      "diffVsBaseline": 0
+     },
+     "safe": {
+      "n": 29,
+      "meanWindowPoints": 289.517,
+      "diffVsBaseline": -2.793
+     },
+     "aggressive": {
+      "n": 29,
+      "meanWindowPoints": 295.138,
+      "diffVsBaseline": 2.828
+     },
+     "balanced-plus": {
+      "n": 29,
+      "meanWindowPoints": 304.69,
+      "diffVsBaseline": 12.379
+     }
+    }
+   }
+  }
+ },
+ "supplementary": {
+  "2022-23": {
+   "excluded": "no fixtures recorded for GW7 | data-quality gate: starts missing in GW1-6 (6); xG/xA missing in GW1-6 (6) | data-quality gate: starts missing in GW1-8 (7); xG/xA missing in GW1-8 (7) | data-quality gate: starts missing in GW1-9 (8); xG/xA missing in GW1-9 (8) | data-quality gate: starts missing in GW1-10 (9); xG/xA missing in GW1-10 (9) | data-quality gate: starts missing in GW1-11 (10); xG/xA missing in GW1-11 (10) | data-quality gate: starts missing in GW1-12 (11); xG/xA missing in GW1-12 (11) | data-quality gate: starts missing in GW1-13 (12); xG/xA missing in GW1-13 (12) | data-quality gate: starts missing in GW1-14 (13); xG/xA missing in GW1-14 (13) | data-quality gate: starts missing in GW1-15 (14); xG/xA missing in GW1-15 (14)"
+  }
+ },
+ "allSeasonsPooled": {
+  "windows": 87,
+  "strategies": [
+   {
+    "id": "balanced",
+    "label": "Balanced",
+    "windows": 87,
+    "gameweeks": 435,
+    "meanWindowPoints": 284.517,
+    "medianWindowPoints": 278,
+    "sdWindowPoints": 49.965,
+    "meanPointsPerGw": 56.903,
+    "xiPointsPerGw": 49.377,
+    "captainPointsPerGw": 7.526,
+    "captain": {
+     "meanPoints": 7.526,
+     "blankRate": 0.301,
+     "haulRate": 0.333,
+     "didNotPlayRate": 0.078,
+     "meanRankInXI": 3.761,
+     "meanRegretVsBestInXI": 5.483
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 53.355,
+     "meanActualPerGw": 56.903,
+     "biasPerGw": -3.549,
+     "squadMAEPerGw": 13.828,
+     "windowMAE": 35.663,
+     "playerMAE": 3.07,
+     "playerBias": -0.035
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 79.545,
+     "didNotPlayRate": 0.091,
+     "under60Rate": 0.15,
+     "autoSubsPerGw": 0.697
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 2.262,
+     "unusedBenchPointsPerGw": 7.621
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 2.655,
+     "shareOfGwsWith3Plus": 0.655
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 257,
+      "meanPoints": 56.735
+     },
+     "4-3-3": {
+      "gameweeks": 37,
+      "meanPoints": 62.676
+     },
+     "3-5-2": {
+      "gameweeks": 91,
+      "meanPoints": 56.22
+     },
+     "4-4-2": {
+      "gameweeks": 38,
+      "meanPoints": 54.316
+     },
+     "5-3-2": {
+      "gameweeks": 6,
+      "meanPoints": 63.833
+     },
+     "5-2-3": {
+      "gameweeks": 3,
+      "meanPoints": 54.333
+     },
+     "5-4-1": {
+      "gameweeks": 3,
+      "meanPoints": 42.333
+     }
+    },
+    "lineupRelaxedShare": 0
+   },
+   {
+    "id": "safe",
+    "label": "Safe",
+    "windows": 87,
+    "gameweeks": 435,
+    "meanWindowPoints": 282.057,
+    "medianWindowPoints": 277,
+    "sdWindowPoints": 48.95,
+    "meanPointsPerGw": 56.411,
+    "xiPointsPerGw": 48.929,
+    "captainPointsPerGw": 7.483,
+    "captain": {
+     "meanPoints": 7.483,
+     "blankRate": 0.303,
+     "haulRate": 0.329,
+     "didNotPlayRate": 0.076,
+     "meanRankInXI": 3.775,
+     "meanRegretVsBestInXI": 5.437
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 53.317,
+     "meanActualPerGw": 56.411,
+     "biasPerGw": -3.095,
+     "squadMAEPerGw": 13.613,
+     "windowMAE": 34.928,
+     "playerMAE": 3.043,
+     "playerBias": 0.011
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 80.1,
+     "didNotPlayRate": 0.09,
+     "under60Rate": 0.148,
+     "autoSubsPerGw": 0.71
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 2.372,
+     "unusedBenchPointsPerGw": 7.798
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 2.637,
+     "shareOfGwsWith3Plus": 0.639
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 263,
+      "meanPoints": 56.323
+     },
+     "4-4-2": {
+      "gameweeks": 31,
+      "meanPoints": 48.129
+     },
+     "4-3-3": {
+      "gameweeks": 42,
+      "meanPoints": 56.167
+     },
+     "3-5-2": {
+      "gameweeks": 81,
+      "meanPoints": 58.296
+     },
+     "5-4-1": {
+      "gameweeks": 4,
+      "meanPoints": 50
+     },
+     "4-5-1": {
+      "gameweeks": 1,
+      "meanPoints": 68
+     },
+     "5-2-3": {
+      "gameweeks": 5,
+      "meanPoints": 68.2
+     },
+     "5-3-2": {
+      "gameweeks": 8,
+      "meanPoints": 68
+     }
+    },
+    "lineupRelaxedShare": 0
+   },
+   {
+    "id": "aggressive",
+    "label": "Aggressive",
+    "windows": 87,
+    "gameweeks": 435,
+    "meanWindowPoints": 282.069,
+    "medianWindowPoints": 283,
+    "sdWindowPoints": 48.82,
+    "meanPointsPerGw": 56.414,
+    "xiPointsPerGw": 48.991,
+    "captainPointsPerGw": 7.423,
+    "captain": {
+     "meanPoints": 7.423,
+     "blankRate": 0.292,
+     "haulRate": 0.322,
+     "didNotPlayRate": 0.069,
+     "meanRankInXI": 3.69,
+     "meanRegretVsBestInXI": 5.361
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 52.434,
+     "meanActualPerGw": 56.414,
+     "biasPerGw": -3.98,
+     "squadMAEPerGw": 13.763,
+     "windowMAE": 35.339,
+     "playerMAE": 3.061,
+     "playerBias": -0.073
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 79.118,
+     "didNotPlayRate": 0.094,
+     "under60Rate": 0.157,
+     "autoSubsPerGw": 0.726
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 2.368,
+     "unusedBenchPointsPerGw": 7.772
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 2.685,
+     "shareOfGwsWith3Plus": 0.687
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 221,
+      "meanPoints": 55.864
+     },
+     "4-3-3": {
+      "gameweeks": 18,
+      "meanPoints": 55.5
+     },
+     "3-5-2": {
+      "gameweeks": 122,
+      "meanPoints": 57.893
+     },
+     "4-4-2": {
+      "gameweeks": 47,
+      "meanPoints": 56.532
+     },
+     "4-5-1": {
+      "gameweeks": 9,
+      "meanPoints": 48.778
+     },
+     "5-4-1": {
+      "gameweeks": 5,
+      "meanPoints": 52.8
+     },
+     "5-3-2": {
+      "gameweeks": 11,
+      "meanPoints": 59.545
+     },
+     "5-2-3": {
+      "gameweeks": 2,
+      "meanPoints": 58.5
+     }
+    },
+    "lineupRelaxedShare": 0
+   },
+   {
+    "id": "balanced-plus",
+    "label": "Balanced Plus",
+    "windows": 87,
+    "gameweeks": 435,
+    "meanWindowPoints": 294.851,
+    "medianWindowPoints": 287,
+    "sdWindowPoints": 52.296,
+    "meanPointsPerGw": 58.97,
+    "xiPointsPerGw": 51.046,
+    "captainPointsPerGw": 7.924,
+    "captain": {
+     "meanPoints": 7.924,
+     "blankRate": 0.271,
+     "haulRate": 0.363,
+     "didNotPlayRate": 0.083,
+     "meanRankInXI": 3.821,
+     "meanRegretVsBestInXI": 5.308
+    },
+    "projectedVsActual": {
+     "meanProjectedPerGw": 53.856,
+     "meanActualPerGw": 58.97,
+     "biasPerGw": -5.114,
+     "squadMAEPerGw": 14.368,
+     "windowMAE": 38.773,
+     "playerMAE": 3.097,
+     "playerBias": -0.083
+    },
+    "startingXI": {
+     "meanMinutesPerStarter": 80.958,
+     "didNotPlayRate": 0.087,
+     "under60Rate": 0.136,
+     "autoSubsPerGw": 0.738
+    },
+    "bench": {
+     "pointsAddedByAutoSubsPerGw": 3,
+     "unusedBenchPointsPerGw": 8.977
+    },
+    "clubConcentration": {
+     "meanMaxFromOneClubInXI": 1.979,
+     "shareOfGwsWith3Plus": 0
+    },
+    "byFormation": {
+     "3-4-3": {
+      "gameweeks": 255,
+      "meanPoints": 60.349
+     },
+     "3-5-2": {
+      "gameweeks": 121,
+      "meanPoints": 56.835
+     },
+     "4-4-2": {
+      "gameweeks": 27,
+      "meanPoints": 54.704
+     },
+     "4-3-3": {
+      "gameweeks": 24,
+      "meanPoints": 62.958
+     },
+     "5-3-2": {
+      "gameweeks": 4,
+      "meanPoints": 48.5
+     },
+     "4-5-1": {
+      "gameweeks": 3,
+      "meanPoints": 55
+     },
+     "5-4-1": {
+      "gameweeks": 1,
+      "meanPoints": 39
+     }
+    },
+    "lineupRelaxedShare": 0.021
+   }
+  ],
+  "windowResults": {
+   "balanced": {
+    "sharedWinPct": 21.648,
+    "outrightWinPct": 19.54,
+    "averageRank": 2.425
+   },
+   "safe": {
+    "sharedWinPct": 10.728,
+    "outrightWinPct": 9.195,
+    "averageRank": 2.753
+   },
+   "aggressive": {
+    "sharedWinPct": 20.115,
+    "outrightWinPct": 19.54,
+    "averageRank": 2.753
+   },
+   "balanced-plus": {
+    "sharedWinPct": 47.51,
+    "outrightWinPct": 47.126,
+    "averageRank": 2.069
+   }
+  },
+  "pairedVsBaseline": {
+   "safe": {
+    "vs": "balanced",
+    "nWindows": 87,
+    "nNonOverlapping": 18,
+    "meanDiff": -2.46,
+    "medianDiff": -1,
+    "sdDiff": 14.244,
+    "varianceDiff": 202.902,
+    "tCI95NonOverlapping": [
+     -12.042,
+     2.487
+    ],
+    "blockBootstrapCI95": [
+     -5.08,
+     0.92
+    ],
+    "signTest": {
+     "wins": 7,
+     "losses": 9,
+     "ties": 2,
+     "p": 0.803619384765625
+    },
+    "effectSize": -0.173,
+    "evidence": "no-evidence-of-difference"
+   },
+   "aggressive": {
+    "vs": "balanced",
+    "nWindows": 87,
+    "nNonOverlapping": 18,
+    "meanDiff": -2.448,
+    "medianDiff": -6,
+    "sdDiff": 23.168,
+    "varianceDiff": 536.739,
+    "tCI95NonOverlapping": [
+     -7.497,
+     14.274
+    ],
+    "blockBootstrapCI95": [
+     -6.023,
+     3.609
+    ],
+    "signTest": {
+     "wins": 10,
+     "losses": 7,
+     "ties": 1,
+     "p": 0.629058837890625
+    },
+    "effectSize": -0.106,
+    "evidence": "no-evidence-of-difference"
+   },
+   "balanced-plus": {
+    "vs": "balanced",
+    "nWindows": 87,
+    "nNonOverlapping": 18,
+    "meanDiff": 10.333,
+    "medianDiff": 6,
+    "sdDiff": 33.042,
+    "varianceDiff": 1091.783,
+    "tCI95NonOverlapping": [
+     -9.308,
+     21.531
+    ],
+    "blockBootstrapCI95": [
+     3.759,
+     17.724
+    ],
+    "signTest": {
+     "wins": 11,
+     "losses": 6,
+     "ties": 1,
+     "p": 0.332305908203125
+    },
+    "effectSize": 0.313,
+    "evidence": "no-evidence-of-difference"
+   }
+  },
+  "rotation": {
+   "medianRotationIndex": 0.236,
+   "high": {
+    "balanced": {
+     "n": 43,
+     "meanWindowPoints": 269.116,
+     "diffVsBaseline": 0
+    },
+    "safe": {
+     "n": 43,
+     "meanWindowPoints": 267.698,
+     "diffVsBaseline": -1.419
+    },
+    "aggressive": {
+     "n": 43,
+     "meanWindowPoints": 264.837,
+     "diffVsBaseline": -4.279
+    },
+    "balanced-plus": {
+     "n": 43,
+     "meanWindowPoints": 276.581,
+     "diffVsBaseline": 7.465
+    }
+   },
+   "low": {
+    "balanced": {
+     "n": 44,
+     "meanWindowPoints": 299.568,
+     "diffVsBaseline": 0
+    },
+    "safe": {
+     "n": 44,
+     "meanWindowPoints": 296.091,
+     "diffVsBaseline": -3.477
+    },
+    "aggressive": {
+     "n": 44,
+     "meanWindowPoints": 298.909,
+     "diffVsBaseline": -0.659
+    },
+    "balanced-plus": {
+     "n": 44,
+     "meanWindowPoints": 312.705,
+     "diffVsBaseline": 13.136
+    }
+   }
+  }
+ }
+}

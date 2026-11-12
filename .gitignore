@@ -1,0 +1,23 @@
+# dependencies and build output
+node_modules
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+
+# local caches and logs (FPL snapshot cache, backtest logs)
+.cache
+*.log
+
+# secrets and local config: never commit
+.env
+.env.*
+!.env.example
+
+# deployment tooling
+.vercel
+
+# OS / editor
+.DS_Store
+.idea
+.vscode

@@ -1,0 +1,48 @@
+{
+  "name": "fpl-intelligence",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "description": "AI-assisted Fantasy Premier League squad builder: deterministic expected-points model + ILP optimiser",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "backtest": "tsx scripts/backtest.ts",
+    "screenshots": "node scripts/screenshots.mjs",
+    "e2e:season": "node scripts/season-e2e.mjs",
+    "e2e:report": "node scripts/report-e2e.mjs",
+    "e2e:balanced-plus": "node scripts/balanced-plus-e2e.mjs",
+    "balanced-plus": "tsx scripts/balanced-plus.ts",
+    "backtest:bp": "tsx scripts/backtest/run-balanced-plus-backtest.ts",
+    "backtest:fetch": "node scripts/backtest/fetch-historical.mjs",
+    "backtest:verify-data": "tsx scripts/backtest/verify-data.ts"
+  },
+  "dependencies": {
+    "dejavu-fonts-ttf": "^2.37.3",
+    "javascript-lp-solver": "^0.4.24",
+    "next": "^15.1.0",
+    "pdfkit": "^0.20.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^1.1.1",
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "@types/pdfkit": "^0.17.7",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "pdfjs-dist": "^6.5.438",
+    "playwright-core": "^1.49.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.8",
+    "yaml": "^2.6.1"
+  }
+}
