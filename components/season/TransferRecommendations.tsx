@@ -19,7 +19,7 @@ function PlayerMini({ p, sell }: { p: PlayerView; sell?: number }) {
   );
 }
 
-export function TransferCard({ t, players, state, onAccept, onReject, onUndo }: { t: TransferDetail; players: TransfersResp["players"]; state: "pending" | "accepted" | "rejected"; onAccept: () => void; onReject: () => void; onUndo: () => void }) {
+export function TransferCard({ t, players, state, onAccept, onReject, onUndo, horizonLabel = "Next 5 GWs" }: { t: TransferDetail & { gainRemainingSeasonRaw?: number }; players: TransfersResp["players"]; state: "pending" | "accepted" | "rejected"; onAccept: () => void; onReject: () => void; onUndo: () => void; horizonLabel?: string }) {
   const o = players[t.out];
   const i = players[t.in];
   if (!o || !i) return null;
@@ -30,10 +30,11 @@ export function TransferCard({ t, players, state, onAccept, onReject, onUndo }: 
         <span className="text-lg text-slate-400">→</span>
         <PlayerMini p={i} />
       </div>
-      <div className="mt-2 grid grid-cols-2 gap-2 text-center text-xs sm:grid-cols-5">
+      <div className={`mt-2 grid grid-cols-2 gap-2 text-center text-xs ${t.gainRemainingSeasonRaw !== undefined ? "sm:grid-cols-6" : "sm:grid-cols-5"}`}>
         <Stat label="Price diff" value={`${t.priceDiffTenths > 0 ? "+" : ""}${(t.priceDiffTenths / 10).toFixed(1)}m`} />
         <Stat label="This GW" value={`${signed(t.gainGw)} pts`} good={t.gainGw >= 0} />
-        <Stat label="Next 5 GWs" value={`${signed(t.gainHorizon)} pts`} good={t.gainHorizon >= 0} />
+        <Stat label={horizonLabel} value={`${signed(t.gainHorizon)} pts`} good={t.gainHorizon >= 0} />
+        {t.gainRemainingSeasonRaw !== undefined && <Stat label="Rest of season (raw)" value={`${signed(t.gainRemainingSeasonRaw, 0)} pts`} good={t.gainRemainingSeasonRaw >= 0} />}
         <Stat label="Deduction" value={t.deduction ? `−${t.deduction}` : "free"} good={!t.deduction} />
         <Stat label="Net gain" value={`${signed(t.net)}`} good={t.net >= 0} bold />
       </div>
@@ -62,11 +63,11 @@ const Stat = ({ label, value, good, bold }: { label: string; value: string; good
   <div className="rounded-lg bg-fpl-bg px-1 py-1"><div className="text-[10px] font-semibold text-slate-500">{label}</div><div className={`${bold ? "text-sm font-black" : "font-bold"} ${good === undefined ? "" : good ? "text-emerald-700" : "text-rose-700"}`}>{value}</div></div>
 );
 
-export function OptionsTable({ options, recommendedN, onApply, appliedKey }: { options: TransferOption[]; recommendedN: number; onApply: (o: TransferOption) => void; appliedKey: string }) {
+export function OptionsTable({ options, recommendedN, onApply, appliedKey, horizonLabel = "5-GW gain" }: { options: TransferOption[]; recommendedN: number; onApply: (o: TransferOption) => void; appliedKey: string; horizonLabel?: string }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[480px] text-sm" data-testid="options-table">
-        <thead><tr className="text-left text-[11px] uppercase text-slate-500"><th className="py-1">Option</th><th>This GW</th><th>5-GW gain</th><th>Hit</th><th>Net</th><th>After</th><th /></tr></thead>
+        <thead><tr className="text-left text-[11px] uppercase text-slate-500"><th className="py-1">Option</th><th>This GW</th><th>{horizonLabel}</th><th>Hit</th><th>Net</th><th>After</th><th /></tr></thead>
         <tbody>
           {options.map((o) => {
             const key = o.transfers.map((t) => `${t.out}>${t.in}`).sort().join("|");

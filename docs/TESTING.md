@@ -1,7 +1,7 @@
 # Testing
 
 ```bash
-npm test            # 224 tests, ~12 s
+npm test            # 254 tests, ~12 s
 npm run typecheck
 npm run screenshots # E2E in headless Chrome against a running app
 ```

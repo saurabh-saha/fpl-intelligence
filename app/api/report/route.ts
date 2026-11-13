@@ -1,4 +1,6 @@
 import { getDataset } from "@/lib/fpl/client";
+import { annotateProjections, applyNewsToDataset } from "@/lib/news/overlay";
+import { loadOverlay } from "@/lib/news/service";
 import { fail, HttpError, parseGw, parsePrefs, readJson } from "@/lib/api";
 import { projectAll } from "@/lib/analytics/playerScoring";
 import { findAlternatives } from "@/lib/optimizer/alternatives";
@@ -65,9 +67,11 @@ export async function POST(req: Request) {
         },
       };
     } else if (body.kind === "builder") {
-      const ds = await getDataset();
-      const gw = parseGw(body.gw, ds);
-      const prefs = parsePrefs(body, ds);
+      const ds0 = await getDataset();
+      const gw = parseGw(body.gw, ds0);
+      const prefs = parsePrefs(body, ds0);
+      const news = await loadOverlay({ disabled: body.news === false });
+      const { ds, impacts } = applyNewsToDataset(ds0, gw, news);
       const by = new Map(ds.players.map((p) => [p.id, p]));
       const all = [...starting, ...bench];
       const budget = prefs.budgetTenths ?? ds.rules.budgetTenths;
@@ -79,7 +83,8 @@ export async function POST(req: Request) {
       const lv = validateLineup(lineup, all, by, ds.rules);
       if (!lv.valid) throw new HttpError(422, `Lineup is not legal: ${lv.errors.join(" ")}`);
       const { byId: proj } = projectAll(ds, gw, prefs);
-      const hz = horizon(ds, gw);
+      annotateProjections(proj, impacts);
+      const hz = horizon(ds0, gw, news);
       const shortlist: NonNullable<ReportInput["shortlist"]> = {};
       for (const id of all) {
         const r = findAlternatives(ds, proj, all, id, prefs, 3);
@@ -87,7 +92,7 @@ export async function POST(req: Request) {
       }
       const total = all.reduce((s, id) => s + by.get(id)!.costTenths, 0);
       input = {
-        kind: "builder", ds, gw, hz, display: proj, starting, bench, captain: body.captain, vice: body.vice, formation: lineup.formation, mode: prefs.mode,
+        kind: "builder", ds, gw, hz, display: proj, starting, bench, captain: body.captain, vice: body.vice, formation: lineup.formation, mode: typeof body.strategyLabel === "string" ? body.strategyLabel.slice(0, 30) : prefs.mode,
         originalIds: Array.isArray(body.originalIds) ? body.originalIds.filter(Number.isInteger) : undefined,
         shortlist, totalCostM: total / 10, remainingM: (budget - total) / 10,
         projectedPoints: lineupExpectedPoints({ ...lineup, viceCaptain: body.vice }, proj),

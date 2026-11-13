@@ -29,6 +29,9 @@ export function PlayerCard({ p, role, onClick, changed, bench }: Props) {
             {role}
           </span>
         )}
+        {p.newsImpact && (
+          <span className="absolute -bottom-0.5 -left-1 grid h-5 w-5 place-items-center rounded-full bg-sky-500 text-[10px] shadow" title={`News: ${p.newsImpact.baseXpts.toFixed(1)} → ${p.newsImpact.newsAdjustedXpts.toFixed(1)} xPts. ${p.newsImpact.adjustmentReasons[0] ?? ""}`} data-testid={`news-badge-${p.id}`}>📰</span>
+        )}
         {warn && (
           <span className="absolute -left-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-amber-400 text-[11px] font-black text-amber-950 shadow" title={p.warnings[0]}>
             !

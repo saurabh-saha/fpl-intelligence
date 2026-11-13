@@ -138,7 +138,7 @@ function explain(outP: Player, inP: Player, hz: Horizon, d: { gainGw: number; ga
       (diffIn && diffOut ? `, next-5 fixture difficulty ${diffIn.toFixed(1)} vs ${diffOut.toFixed(1)}.` : "."),
   );
   if (inP.ownership < 10) parts.push(`Differential: ${inP.ownership}% owned.`);
-  parts.push(`${d.priceDiff === 0 ? "Same price" : d.priceDiff > 0 ? `Costs £${(d.priceDiff / 10).toFixed(1)}m more` : `Frees £${(-d.priceDiff / 10).toFixed(1)}m`}; ${d.gainHorizon >= 0 ? "+" : ""}${d.gainHorizon.toFixed(1)} weighted pts over 5 GWs.`);
+  parts.push(`${d.priceDiff === 0 ? "Same price" : d.priceDiff > 0 ? `Costs £${(d.priceDiff / 10).toFixed(1)}m more` : `Frees £${(-d.priceDiff / 10).toFixed(1)}m`}; ${d.gainHorizon >= 0 ? "+" : ""}${d.gainHorizon.toFixed(1)} weighted pts over ${hz.gws.length} GWs.`);
   return parts.join(" ");
 }
 
@@ -182,7 +182,17 @@ const LABELS = ["Save your free transfer", "Make one transfer", "Make two transf
  *   net = (discounted 5-GW expected points after - before) - hit cost
  * plus the heuristic value of the free transfers left banked. It never forces a transfer.
  */
-export function analyseTransfers(ds: Dataset, base: SeasonSquad, gw: number, hzIn?: Horizon): TransferAnalysis {
+export interface AnalyseOptions {
+  /** multiplies MIN_EDGE and HIT_MARGIN (use > 1 when the horizon's discount weights sum to more than the default five-gameweek horizon) */
+  edgeScale?: number;
+  /** multiplies the value of free transfers left banked */
+  bankScale?: number;
+}
+
+export function analyseTransfers(ds: Dataset, base: SeasonSquad, gw: number, hzIn?: Horizon, opts: AnalyseOptions = {}): TransferAnalysis {
+  const edgeScale = opts.edgeScale ?? 1;
+  const bankScale = opts.bankScale ?? 1;
+  const bankV = (n: number) => bankValue(n) * bankScale;
   const hz = hzIn ?? buildHorizon(ds, gw);
   const by = byIdMap(ds);
   const players = base.holdings.map((h) => by.get(h.id)!);
@@ -271,7 +281,7 @@ export function analyseTransfers(ds: Dataset, base: SeasonSquad, gw: number, hzI
       gainGw: round(st.perGw[0] - st0.perGw[0]),
       gainHorizon: round(gainH),
       net: round(net),
-      score: round(net + bankValue(ftAfter)),
+      score: round(net + bankV(ftAfter)),
       bankAfterTenths: st.bank,
     });
   }
@@ -280,7 +290,7 @@ export function analyseTransfers(ds: Dataset, base: SeasonSquad, gw: number, hzI
   const save = options[0];
   let chosen = save;
   for (const o of options.slice(1)) {
-    const margin = MIN_EDGE + (o.hitCost > 0 ? HIT_MARGIN : 0);
+    const margin = (MIN_EDGE + (o.hitCost > 0 ? HIT_MARGIN : 0)) * edgeScale;
     if (o.score > chosen.score + (chosen === save ? margin : 0) && o.score >= save.score + margin) chosen = o;
   }
   const action: TransferAnalysis["action"] = chosen.n === 0 ? "save" : chosen.hitCost > 0 ? "hit" : "transfer";
@@ -290,12 +300,12 @@ export function analyseTransfers(ds: Dataset, base: SeasonSquad, gw: number, hzI
     const top = options[1];
     headline = ft >= ds.rules.maxFreeTransfers ? "No strong move: but you are at the cap" : ft > 1 ? `Save your free transfers (${ft} banked)` : "Save your free transfer";
     reason = top
-      ? `The best single move gains only ${top.gainHorizon.toFixed(1)} weighted pts over 5 GWs; banking is worth about ${(bankValue(save.ftAfter) - bankValue(top.ftAfter)).toFixed(1)} more than using it. No transfer clears the bar.`
+      ? `The best single move gains only ${top.gainHorizon.toFixed(1)} weighted pts over ${hz.gws.length} GWs; banking is worth about ${(bankV(save.ftAfter) - bankV(top.ftAfter)).toFixed(1)} more than using it. No transfer clears the bar.`
       : "No legal improving transfer found.";
   } else if (chosen.hitCost > 0) {
     reason = `${chosen.n} transfers gain ${chosen.gainHorizon.toFixed(1)} weighted pts; after the -${chosen.hitCost} hit that is ${chosen.net.toFixed(1)} net, clearly better than saving.`;
   } else {
-    reason = `Net +${chosen.net.toFixed(1)} weighted pts over 5 GWs for free, ahead of saving (the next-best use of a transfer is banking it).`;
+    reason = `Net +${chosen.net.toFixed(1)} weighted pts over ${hz.gws.length} GWs for free, ahead of saving (the next-best use of a transfer is banking it).`;
   }
 
   // "Sell" list: up to five alternatives for every player, weakest first.

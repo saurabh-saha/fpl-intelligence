@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDataset } from "./fpl/client";
+import { annotateProjections, applyNewsToDataset } from "./news/overlay";
+import { loadOverlay } from "./news/service";
 import { nextGameweek } from "./fpl/normalizer";
 import { projectAll } from "./analytics/playerScoring";
 import { OptimizerError } from "./optimizer/squadOptimizer";
@@ -59,8 +61,12 @@ export async function context(gwRaw: unknown, prefsRaw?: unknown) {
   const ds = await getDataset();
   const gw = parseGw(gwRaw, ds);
   const prefs = parsePrefs(prefsRaw, ds);
-  const { byId, ctx } = projectAll(ds, gw, prefs);
-  return { ds, gw, prefs, proj: byId, ctx };
+  // News intelligence: availability-adjusted dataset for this gameweek (the SAME dataset object when there is no relevant news).
+  const overlay = await loadOverlay({ disabled: (prefsRaw as { news?: unknown } | undefined)?.news === false });
+  const { ds: dsN, impacts } = applyNewsToDataset(ds, gw, overlay);
+  const { byId, ctx } = projectAll(dsN, gw, prefs);
+  annotateProjections(byId, impacts);
+  return { ds: dsN, gw, prefs, proj: byId, ctx, news: { applied: impacts.size, impacts } };
 }
 
 export function freshness(ds: Dataset) {
@@ -109,6 +115,7 @@ export function view(p: Player, pr: Projection, ds: Dataset) {
     components: pr.components,
     warnings: pr.warnings,
     reasons: pr.reasons,
+    newsImpact: pr.news,
   };
 }
 const round = (n: number) => Math.round(n * 100) / 100;

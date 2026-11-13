@@ -1,5 +1,5 @@
 import type { ChipName, Dataset, Player, Projection } from "../fpl/types";
-import { projectPlayer } from "../analytics/expectedPoints";
+import { newsProject } from "../news/overlay";
 import { bestLineup, lineupExpectedPoints } from "../optimizer/formationOptimizer";
 import { optimizeSquad } from "../optimizer/squadOptimizer";
 import { buildHorizon, squadValue, type Horizon } from "./horizon";
@@ -16,6 +16,8 @@ const FH_LOOKAHEAD = 5;
 export interface ChipOptionGw {
   gw: number;
   gain: number;
+  /** what the same chip would add on the unadjusted projections (only when news changed something) */
+  gainWithoutNews?: number;
   doubleTeams: number;
   blankTeams: number;
 }
@@ -31,6 +33,8 @@ export interface ChipAdvice {
   options: ChipOptionGw[];
   verdict: "use-now" | "save" | "use-soon" | "unavailable";
   text: string;
+  /** squad players in the evaluated gameweek whose availability news changed (bench/captain relevant to this chip) */
+  availabilityRisks?: { playerId: number; name: string; gw: number; status: string; baseXpts: number; adjustedXpts: number; reason: string }[];
 }
 
 function fixtureShape(ds: Dataset, gw: number) {
@@ -48,7 +52,7 @@ function projFor(hz: Horizon, ds: Dataset, g: number): Map<number, Projection> {
   if (i >= 0) return hz.proj[i];
   const m = new Map<number, Projection>();
   for (const p of ds.players) {
-    const pr = projectPlayer(p, hz.ctx, g);
+    const pr = newsProject(p, hz.ctx, g, hz.news);
     m.set(p.id, { ...pr, score: pr.ep });
   }
   return m;
@@ -147,7 +151,13 @@ export function chipStrategy(ds: Dataset, base: SeasonSquad, gw: number, bestNor
       else if (st.name === "freehit") gain = planFreeHit(ds, base, g, hz).gain;
       else if (st.name === "wildcard" && g === gw) gain = round(planWildcard(ds, base, g, hz).gainHorizon - Math.max(0, bestNormalNet));
       else continue; // wildcard: only evaluated for right now
-      options.push({ gw: g, gain, ...fixtureShape(ds, g) });
+      const opt: ChipOptionGw = { gw: g, gain, ...fixtureShape(ds, g) };
+      if ((st.name === "bboost" || st.name === "3xc") && players.some((p) => proj.get(p.id)?.news)) {
+        const l = bestLineup(players, proj, ds.rules);
+        const raw = (id: number) => proj.get(id)?.news?.baseXpts ?? proj.get(id)?.ep ?? 0;
+        opt.gainWithoutNews = round(st.name === "bboost" ? l.bench.reduce((a, id) => a + raw(id), 0) : raw(l.captain));
+      }
+      options.push(opt);
     }
     const now = options.find((o) => o.gw === gw)?.gain ?? 0;
     const best = options.reduce<ChipOptionGw | null>((b, o) => (!b || o.gain > b.gain ? o : b), null);
@@ -172,7 +182,24 @@ export function chipStrategy(ds: Dataset, base: SeasonSquad, gw: number, bestNor
         ? `Save it: +${now.toFixed(1)} now but +${best.gain.toFixed(1)} in GW${best.gw}${shape}${basis}.`
         : `Save it: +${now.toFixed(1)} now is below the ${threshold}-point bar for this chip${basis}.`;
     }
-    advice.push({ chip: st.name, label, available: true, window: st.window, nowGain: now, best: best ? { gw: best.gw, gain: best.gain } : null, options, verdict, text });
+    // Availability risks for the chip's evaluated gameweek: who in the squad is affected by news, and how.
+    let availabilityRisks: ChipAdvice["availabilityRisks"];
+    if (st.name === "bboost" || st.name === "3xc") {
+      const g = best?.gw ?? gw;
+      const proj = projFor(hz, ds, g);
+      const l = bestLineup(players, proj, ds.rules);
+      const focus = st.name === "bboost" ? l.bench : [l.captain, l.viceCaptain];
+      const risks = (st.name === "bboost" ? players.map((p) => p.id) : focus)
+        .map((id) => ({ id, pr: proj.get(id) }))
+        .filter((x) => x.pr?.news && (x.pr.news.availabilityStatus !== "available") )
+        .map((x) => ({ playerId: x.id, name: by.get(x.id)!.webName, gw: g, status: x.pr!.news!.availabilityStatus, baseXpts: x.pr!.news!.baseXpts, adjustedXpts: x.pr!.news!.newsAdjustedXpts, reason: x.pr!.news!.adjustmentReasons[0] ?? "" }));
+      if (risks.length) {
+        availabilityRisks = risks;
+        text += ` Availability risks (GW${g}): ${risks.slice(0, 3).map((r) => `${r.name} ${r.status.replace("-", " ")}`).join(", ")}${risks.length > 3 ? ` +${risks.length - 3} more` : ""}; the figures above already use availability-adjusted projections.`;
+      }
+      if (best?.gainWithoutNews !== undefined && Math.abs(best.gainWithoutNews - best.gain) >= 0.5) text += ` Without news the unadjusted sum would be +${best.gainWithoutNews.toFixed(1)}.`;
+    }
+    advice.push({ chip: st.name, label, available: true, window: st.window, nowGain: now, best: best ? { gw: best.gw, gain: best.gain } : null, options, verdict, text, availabilityRisks });
   }
   return advice;
 }

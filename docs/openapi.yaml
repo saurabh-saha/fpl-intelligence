@@ -284,6 +284,78 @@ paths:
             application/pdf:
               schema: { type: string, format: binary }
         "400": { $ref: "#/components/responses/BadRequest" }
+  /api/strategies/season-long:
+    post:
+      summary: Season Long squad (rest-of-season optimiser)
+      description: |
+        Fifth strategy. Builds a 15-player squad that maximises discounted expected points from the selected gameweek to the
+        horizon end (default GW38), using availability/injury trajectories, minutes, fixtures and team strength from the shared
+        projection engine. Returns the usual squad payload plus `seasonLong` (horizon, totals, per-player rows with reasons).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gw: { type: integer }
+                horizonEnd: { type: integer, description: "Last gameweek of the horizon (>= gw + 1 ... 38). Default 38." }
+                budget: { type: number, description: "£m, default 100" }
+                formation: { type: string, example: "4-4-2" }
+                maxOwnership: { type: number }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "422": { description: Constraints cannot be satisfied }
+  /api/strategies/season-long/players:
+    post:
+      summary: Season Long rows for a given squad
+      description: Describes the squad exactly as given (starting XI, bench, captain, vice) with price, next-GW xPts, rest-of-season xPts, minutes, start probability and reasons.
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "422": { description: Squad or lineup is not legal }
+  /api/strategies/season-long/transfers:
+    post:
+      summary: Weekly transfer recommendation over the remaining season
+      description: Same engine and FPL transfer rules as /api/season/transfers, evaluated over the remaining-season horizon with decision thresholds scaled to its length. Never forces a transfer; each option reports hit cost and remaining-season gain.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                season: { type: object, additionalProperties: true }
+                gw: { type: integer }
+                horizonEnd: { type: integer }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/news:
+    get:
+      summary: News Intelligence feed
+      description: |
+        De-duplicated availability news events (injury, illness, suspension, international duty, late return, rotation,
+        training/manager updates) with every source link, combined confidence, and - where the news changes the model -
+        the original and news-adjusted xPts, start probability and expected minutes. `refresh=1` refreshes first when the
+        cache is older than the deadline-aware window (5/10/20/45 min); it never bypasses the 30 s rate limit.
+      parameters:
+        - { name: gw, in: query, schema: { type: integer } }
+        - { name: ids, in: query, schema: { type: string }, description: Comma-separated player ids to restrict to. }
+        - { name: refresh, in: query, schema: { type: string, enum: ["0", "1"] } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "400": { $ref: "#/components/responses/BadRequest" }
+  /api/news/refresh:
+    post:
+      summary: Manual news refresh
+      description: Bypasses the freshness window but not the 30 s rate limit (429). Source failures are reported per source and never discard cached data.
+      responses:
+        "200": { description: Refresh result and freshness, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+        "429": { description: Rate limited }
   /api/share-image:
     get:
       summary: Shareable squad graphic

@@ -19,13 +19,15 @@ Requires Node 20+. No database, accounts or API keys. If the FPL API is unreacha
 
 | Command | What it does |
 |---|---|
-| `npm test` | 224 unit/integration tests (Vitest) |
+| `npm test` | 254 unit/integration tests (Vitest) |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run backtest` | Point-in-time backtest vs actual points, writes `docs/backtest-results.json` |
 | `npm run screenshots` | End-to-end walkthrough of the New squad builder in headless Chrome (asserts the flow) and regenerates `docs/screenshots/` |
 | `npm run backtest:verify-data` | Offline: re-hash the frozen historical snapshots against `data/historical/manifest.json` |
 | `npm run backtest:bp` | Rolling historical backtest of all four strategies (frozen real data in `data/historical`; writes `docs/backtest/*`) |
 | `npm run e2e:balanced-plus` | Browser E2E for the Balanced Plus page: comparison table, explanations, PDF download validated against the page |
+| `npm run e2e:season-long` | Browser E2E for Season Long: Team Builder desktop + mobile, existing strategies, My Team horizon toggle |
+| `npm run backtest:sl` | Season Long backtest (docs/SEASON_LONG.md) |
 | `npm run balanced-plus` | Generates the Balanced Plus Gameweek Intelligence Report PDF (`docs/samples/`) |
 | `npm run e2e:report` | **Final E2E**: clicks *Download GW report* in Team Builder and My Team (incl. Free Hit) in Chrome and validates the downloaded PDF against what was on screen |
 | `npm run e2e:season` | End-to-end walkthrough of the Season Manager (import errors, accept/restore, replace, chips, plan ahead, lock-in, predicted vs actual, persistence, mobile) |

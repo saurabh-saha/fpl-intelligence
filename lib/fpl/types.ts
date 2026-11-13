@@ -46,6 +46,8 @@ export interface Player {
   chanceNext: number | null;
   status: string;
   news: string;
+  /** when FPL last changed the news text (ISO), if the API provides it */
+  newsAdded?: string | null;
   penaltiesOrder: number | null;
   freekicksOrder: number | null;
   cornersOrder: number | null;
@@ -187,6 +189,8 @@ export interface Projection {
   components: Components;
   warnings: string[];
   reasons: string[];
+  /** present only when news intelligence changed this projection; carries the original and adjusted numbers */
+  news?: import("../news/types").NewsImpact;
 }
 
 export type Mode = "balanced" | "safe" | "aggressive";

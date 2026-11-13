@@ -1,3 +1,4 @@
+import type { LockRecord } from "./lockHistory";
 import type { ChipName } from "../fpl/types";
 export type { ChipName };
 
@@ -88,5 +89,7 @@ export interface SeasonState {
   /** real per-gameweek results imported from FPL */
   actualHistory: { event: number; points: number; transferCost: number; totalPoints: number; value: number; bank: number; chip?: string | null }[];
   warnings: string[];
+  /** most recent first, max 5; absent in records saved before this feature */
+  lockHistory?: LockRecord[];
   updatedAt: string;
 }

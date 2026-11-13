@@ -4,6 +4,7 @@ import { bestLineup } from "../optimizer/formationOptimizer";
 import { optimizeSquad } from "../optimizer/squadOptimizer";
 import { buildHorizon, type Horizon } from "../season/horizon";
 import { balancedPlusValues, bestLineupBalancedPlus, optimizeBalancedPlus, type BpOptions } from "../strategies/balancedPlus";
+import { buildSeasonHorizon, optimizeSeasonLong, seasonLongLineup, type SlParams } from "../strategies/seasonLong";
 import { historyQuality, pointInTime, rotationIndex, type AvailabilityMode, type SeasonData } from "./historical";
 import { scoreGameweek } from "./scoring";
 
@@ -13,11 +14,13 @@ export interface StrategyDef {
   id: string;
   label: string;
   /** existing = unchanged optimiser and lineup rule; bp = Balanced Plus (possibly an ablation variant) */
-  kind: "existing" | "bp";
+  kind: "existing" | "bp" | "sl";
   mode?: Mode;
   bp?: BpOptions;
   /** discount weights for a Balanced Plus variant (default: the shipped 1/.9/.8/.7/.6) */
   weights?: number[];
+  /** Season Long: parameter overrides and an optional shorter horizon (gameweeks); default = to the end of the season */
+  sl?: { params?: Partial<SlParams>; horizon?: number };
 }
 
 export const MAIN_STRATEGIES: StrategyDef[] = [
@@ -83,6 +86,8 @@ const withWeights = (hz: Horizon, w: number[]): Horizon => ({ ...hz, weights: w.
 
 export interface RunOptions {
   sd: SeasonData;
+  /** gameweeks each squad is held (default 5; the existing results use 5) */
+  windowLength?: number;
   strategies: StrategyDef[];
   availability: AvailabilityMode;
   /** first deadline to test (history needed before it) */
@@ -113,16 +118,17 @@ export function runSeason(o: RunOptions): { windows: WindowRecord[]; skipped: Sk
   };
   const windows: WindowRecord[] = [];
   const skipped: SkippedWindow[] = [];
-  const last = Math.min(o.lastK ?? 38 - (WINDOW - 1), sd.maxGw - (WINDOW - 1));
+  const L = o.windowLength ?? WINDOW;
+  const last = Math.min(o.lastK ?? 38 - (L - 1), sd.maxGw - (L - 1));
 
   for (let k = o.firstK; k <= last; k++) {
-    const gws = Array.from({ length: WINDOW }, (_, j) => k + j);
+    const gws = Array.from({ length: L }, (_, j) => k + j);
     const missing = gws.filter((g) => !sd.gwsWithFixtures.has(g));
     if (missing.length) { skipped.push({ season: sd.season, k, reason: `no fixtures recorded for GW${missing.join(",")}` }); continue; }
     const q = historyQuality(sd, k);
     if (!q.ok) { skipped.push({ season: sd.season, k, reason: q.reason! }); continue; }
     const ck = ctxAt(k);
-    const rotation = gws.reduce((a, g) => a + rotationIndex(sd, g), 0) / WINDOW;
+    const rotation = gws.reduce((a, g) => a + rotationIndex(sd, g), 0) / L;
     const rec: WindowRecord = { season: sd.season, k, rotation, strategies: {} };
 
     for (const st of o.strategies) {
@@ -131,6 +137,11 @@ export function runSeason(o: RunOptions): { windows: WindowRecord[]; skipped: Sk
       let cost: number;
       if (st.kind === "existing") {
         const r = optimizeSquad(ck.ds, ck.proj[st.mode!], { mode: st.mode! }).result;
+        squad = r.squad;
+        cost = r.totalCostTenths;
+      } else if (st.kind === "sl") {
+        const shz = buildSeasonHorizon(ck.ds, k, { endGw: st.sl?.horizon ? k + st.sl.horizon - 1 : undefined, params: st.sl?.params });
+        const r = optimizeSeasonLong(ck.ds, shz);
         squad = r.squad;
         cost = r.totalCostTenths;
       } else {
@@ -151,6 +162,10 @@ export function runSeason(o: RunOptions): { windows: WindowRecord[]; skipped: Sk
         if (st.kind === "existing") {
           const l = bestLineup(players, ct.proj[st.mode!], ct.ds.rules);
           lineup = { starting: l.starting, bench: l.bench, captain: l.captain, vice: l.viceCaptain, formation: l.formation };
+        } else if (st.kind === "sl") {
+          // weekly lineup: that gameweek's xPts from the shared model, independent captaincy
+          const l = seasonLongLineup(ct.ds, { display: ct.proj.balanced }, squad);
+          lineup = { starting: l.starting, bench: l.bench, captain: l.captain, vice: l.vice, formation: l.formation };
         } else {
           const hzt = st.weights ? withWeights(ct.hz, st.weights) : ct.hz;
           const l = bestLineupBalancedPlus(ct.ds, hzt, squad, st.bp ?? {}, balancedPlusValues(ct.ds, hzt, st.bp ?? {}));

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getDataset } from "@/lib/fpl/client";
 import { fail, freshness, parseGw, squadView } from "@/lib/api";
 import { horizon } from "@/lib/seasonApi";
+import { applyNewsToDataset } from "@/lib/news/overlay";
+import { loadOverlay } from "@/lib/news/service";
 import { buildBalancedPlusDoc } from "@/lib/strategies/report";
 import { loadValidationSummary } from "@/lib/strategies/validation";
 
@@ -14,9 +16,11 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: Request) {
   try {
-    const ds = await getDataset();
-    const gw = parseGw(new URL(req.url).searchParams.get("gw"), ds);
-    const hz = horizon(ds, gw);
+    const ds0 = await getDataset();
+    const gw = parseGw(new URL(req.url).searchParams.get("gw"), ds0);
+    const news = await loadOverlay();
+    const hz = horizon(ds0, gw, news);
+    const ds = applyNewsToDataset(ds0, gw, news).ds; // availability-adjusted for the frozen strategy code
     const doc = await buildBalancedPlusDoc(ds, gw, hz);
     const { bp } = doc;
     return NextResponse.json({

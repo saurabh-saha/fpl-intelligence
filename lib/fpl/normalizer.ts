@@ -91,6 +91,7 @@ export function normalizePlayer(e: Raw): Player | null {
     chanceNext: nullableNum(e.chance_of_playing_next_round),
     status: String(e.status ?? "a"),
     news: String(e.news ?? ""),
+    newsAdded: e.news_added ? String(e.news_added) : null,
     penaltiesOrder: nullableNum(e.penalties_order),
     freekicksOrder: nullableNum(e.direct_freekicks_order),
     cornersOrder: nullableNum(e.corners_and_indirect_freekicks_order),

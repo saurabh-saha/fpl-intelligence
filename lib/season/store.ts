@@ -8,7 +8,9 @@ export function loadSeason(): SeasonState | null {
     const raw = localStorage.getItem(KEY);
     if (!raw) return null;
     const s = JSON.parse(raw) as SeasonState;
-    return s?.version === 1 && s.actual?.holdings ? s : null;
+    if (!(s?.version === 1 && s.actual?.holdings)) return null;
+    // records saved before lock history existed simply have none; a malformed value is ignored, never overwritten
+    return Array.isArray(s.lockHistory) ? { ...s, lockHistory: s.lockHistory.slice(0, 5) } : { ...s, lockHistory: undefined };
   } catch {
     return null;
   }

@@ -16,10 +16,15 @@
     "e2e:season": "node scripts/season-e2e.mjs",
     "e2e:report": "node scripts/report-e2e.mjs",
     "e2e:balanced-plus": "node scripts/balanced-plus-e2e.mjs",
+    "e2e:lock-undo": "node scripts/lock-undo-e2e.mjs",
+    "e2e:news": "node scripts/news-e2e.mjs",
+    "e2e:season-long": "node scripts/season-long-e2e.mjs",
     "balanced-plus": "tsx scripts/balanced-plus.ts",
     "backtest:bp": "tsx scripts/backtest/run-balanced-plus-backtest.ts",
     "backtest:fetch": "node scripts/backtest/fetch-historical.mjs",
-    "backtest:verify-data": "tsx scripts/backtest/verify-data.ts"
+    "backtest:verify-data": "tsx scripts/backtest/verify-data.ts",
+    "backtest:sl": "tsx scripts/backtest/run-season-long-backtest.ts",
+    "backtest:calibrate-sl": "tsx scripts/backtest/calibrate-season-long.ts"
   },
   "dependencies": {
     "dejavu-fonts-ttf": "^2.37.3",

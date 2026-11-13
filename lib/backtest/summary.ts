@@ -1,7 +1,7 @@
 import { blockBootstrapCI, mean, median, ranks, sd, signTest, tInterval, variance } from "./stats";
 import type { StrategyDef, WindowRecord } from "./run";
 
-export const NON_OVERLAPPING = (k: number, firstK: number) => (k - firstK) % 5 === 0;
+export const NON_OVERLAPPING = (k: number, firstK: number, step = 5) => (k - firstK) % step === 0;
 const r3 = (n: number) => (Number.isFinite(n) ? Math.round(n * 1000) / 1000 : null);
 
 export interface PairedStats {
@@ -25,7 +25,7 @@ export interface PairedStats {
   evidence: "advantage" | "disadvantage" | "no-evidence-of-difference";
 }
 
-export function pairedStats(windows: WindowRecord[], id: string, baseline: string, firstKBySeason: Record<string, number>): PairedStats {
+export function pairedStats(windows: WindowRecord[], id: string, baseline: string, firstKBySeason: Record<string, number>, windowLen = 5): PairedStats {
   const bySeason = new Map<string, WindowRecord[]>();
   for (const w of windows) (bySeason.get(w.season) ?? bySeason.set(w.season, []).get(w.season)!).push(w);
   const series: number[][] = [];
@@ -36,10 +36,10 @@ export function pairedStats(windows: WindowRecord[], id: string, baseline: strin
     const d = ordered.map((w) => w.strategies[id].points - w.strategies[baseline].points);
     series.push(d);
     all.push(...d);
-    ordered.forEach((w, i) => { if (NON_OVERLAPPING(w.k, firstKBySeason[season] ?? ordered[0].k)) nonOverlap.push(d[i]); });
+    ordered.forEach((w, i) => { if (NON_OVERLAPPING(w.k, firstKBySeason[season] ?? ordered[0].k, windowLen)) nonOverlap.push(d[i]); });
   }
   const t = nonOverlap.length > 1 ? tInterval(nonOverlap) : null;
-  const bb = all.length >= 10 ? blockBootstrapCI(series, 5) : null;
+  const bb = all.length >= 10 ? blockBootstrapCI(series, windowLen) : null;
   const sg = signTest(nonOverlap);
   const excl0 = (lo: number | null | undefined, hi: number | null | undefined) => lo != null && hi != null && (lo > 0 || hi < 0);
   const both = excl0(t?.lo, t?.hi) && excl0(bb?.lo, bb?.hi) && Math.sign(t!.mean) === Math.sign(bb!.mean);
@@ -59,7 +59,7 @@ export function pairedStats(windows: WindowRecord[], id: string, baseline: strin
   };
 }
 
-export function summarise(windows: WindowRecord[], strategies: StrategyDef[], baseline = "balanced", firstKBySeason: Record<string, number> = {}) {
+export function summarise(windows: WindowRecord[], strategies: StrategyDef[], baseline = "balanced", firstKBySeason: Record<string, number> = {}, windowLen = 5) {
   const ids = strategies.map((s) => s.id);
   const perStrategy = ids.map((id) => {
     const ws = windows.map((w) => w.strategies[id]);
@@ -130,7 +130,7 @@ export function summarise(windows: WindowRecord[], strategies: StrategyDef[], ba
   const n = windows.length;
   const winShare = Object.fromEntries(ids.map((i) => [i, { sharedWinPct: r3((100 * wins[i]) / n), outrightWinPct: r3((100 * outright[i]) / n), averageRank: r3(rankSum[i] / n) }]));
 
-  const paired = Object.fromEntries(ids.filter((i) => i !== baseline).map((i) => [i, pairedStats(windows, i, baseline, firstKBySeason)]));
+  const paired = Object.fromEntries(ids.filter((i) => i !== baseline).map((i) => [i, pairedStats(windows, i, baseline, firstKBySeason, windowLen)]));
 
   // rotation split (post hoc classification of periods, NEVER used for selection)
   const rot = windows.map((w) => w.rotation).filter(Number.isFinite);

@@ -44,3 +44,32 @@ export function freezeOrVerify(force = false): { frozenAt: string; config: Retur
   }
   return { frozenAt: rec.frozenAt, config: cfg, verified: true };
 }
+
+/* ---------------- Season Long: a separate freeze record (the Balanced Plus freeze above is untouched) ---------------- */
+import { SEASON_LONG } from "../strategies/seasonLong";
+
+const FROZEN_SL_FILE = path.join(process.cwd(), "data", "backtest-frozen-season-long.json");
+
+export function seasonLongConfig() {
+  const files = [...strategySourceFiles(), "lib/strategies/seasonLong.ts"].sort();
+  return {
+    seasonLongParameters: { ...SEASON_LONG, recoveryTau: { ...SEASON_LONG.recoveryTau } },
+    windowLengths: [5, 10],
+    sourceHashes: Object.fromEntries(files.map((f) => [f, createHash("sha256").update(readFileSync(path.join(process.cwd(), f))).digest("hex")])),
+  };
+}
+
+export function freezeOrVerifySeasonLong(force = false) {
+  const cfg = seasonLongConfig();
+  if (!existsSync(FROZEN_SL_FILE) || force) {
+    const rec = { frozenAt: new Date().toISOString(), note: "Season Long code and parameters when the held-out evaluation was first run. Parameters were calibrated on the development season (2023-24) only.", config: cfg };
+    writeFileSync(FROZEN_SL_FILE, JSON.stringify(rec, null, 2));
+    return { ...rec, verified: true };
+  }
+  const rec = JSON.parse(readFileSync(FROZEN_SL_FILE, "utf8"));
+  if (JSON.stringify(rec.config) !== JSON.stringify(cfg)) {
+    const diff = Object.keys(cfg.sourceHashes).filter((f) => cfg.sourceHashes[f] !== rec.config.sourceHashes[f]);
+    throw new Error(`Season Long code/parameters changed since the freeze (${rec.frozenAt}): ${diff.join(", ") || "parameters"}. Re-run with FORCE_REFREEZE=1 only if deliberate and documented.`);
+  }
+  return { frozenAt: rec.frozenAt, config: cfg, verified: true };
+}

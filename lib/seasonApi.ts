@@ -1,4 +1,6 @@
 import { getDataset } from "./fpl/client";
+import type { NewsOverlay } from "./news/overlay";
+import { loadOverlay } from "./news/service";
 import { HttpError, parseGw, parseSeason, view, squadView, type PlayerView } from "./api";
 import { buildHorizon, type Horizon } from "./season/horizon";
 import { applyPlan, byIdMap, rollForward, squadValueTenths, totalBudgetTenths } from "./season/squad";
@@ -9,11 +11,11 @@ import type { Dataset, Projection } from "./fpl/types";
 import type { SeasonSquad, SeasonState } from "./season/types";
 
 const hzCache = new Map<string, Horizon>();
-export function horizon(ds: Dataset, gw: number): Horizon {
-  const key = `${ds.fetchedAt}:${ds.source}:${gw}`;
+export function horizon(ds: Dataset, gw: number, news?: NewsOverlay | null): Horizon {
+  const key = `${ds.fetchedAt}:${ds.source}:${gw}:${news?.version ?? "no-news"}`;
   let hz = hzCache.get(key);
   if (!hz) {
-    hz = buildHorizon(ds, gw);
+    hz = buildHorizon(ds, gw, undefined, news);
     hzCache.set(key, hz);
     if (hzCache.size > 8) hzCache.delete(hzCache.keys().next().value!);
   }
@@ -27,6 +29,7 @@ export interface SeasonCtx {
   base: SeasonSquad;
   rollErrors: string[];
   hz: Horizon;
+  news: NewsOverlay | null;
   /** gameweek projections with ep as the ranking score, for lineups */
   proj: Map<number, Projection>;
 }
@@ -37,9 +40,10 @@ export async function seasonContext(body: any): Promise<SeasonCtx> {
   const gw = body.gw === undefined || body.gw === null ? state.actual.gw : parseGw(body.gw, ds);
   if (gw < state.actual.gw) throw new HttpError(400, `Cannot plan GW${gw}: your actual squad is already at GW${state.actual.gw}.`);
   const { base, errors } = rollForward(state, ds, gw);
-  const hz = horizon(ds, gw);
+  const news = await loadOverlay({ disabled: body.news === false });
+  const hz = horizon(ds, gw, news);
   const proj = new Map([...hz.display].map(([id, pr]) => [id, { ...pr, score: pr.ep }]));
-  return { ds, state, gw, base, rollErrors: errors, hz, proj };
+  return { ds, state, gw, base, rollErrors: errors, hz, news, proj };
 }
 
 export function playersFor(ctx: SeasonCtx, ids: Iterable<number>): Record<number, PlayerView> {

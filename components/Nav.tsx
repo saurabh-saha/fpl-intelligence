@@ -6,6 +6,7 @@ const links = [
   { href: "/my-team", label: "My Team" },
   { href: "/team-builder", label: "New squad" },
   { href: "/strategies/balanced-plus", label: "Balanced Plus" },
+  { href: "/news", label: "News" },
   { href: "/players", label: "Players" },
   { href: "/dashboard", label: "Dashboard" },
 ];
@@ -19,12 +20,12 @@ export function Nav() {
           <span className="grid h-8 w-8 place-items-center rounded-full bg-fpl-green text-fpl-purple">⚽</span>
           <span className="hidden sm:inline">FPL Intelligence</span>
         </Link>
-        <nav className="ml-auto flex gap-1 text-sm font-semibold">
+        <nav className="ml-auto flex min-w-0 gap-0.5 overflow-x-auto whitespace-nowrap text-[13px] font-semibold sm:gap-1 sm:text-sm">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className={`rounded-full px-3 py-1.5 transition ${path.startsWith(l.href) ? "bg-fpl-green text-fpl-purple" : "hover:bg-white/15"}`}
+              className={`rounded-full px-2.5 py-1.5 transition sm:px-3 ${path.startsWith(l.href) ? "bg-fpl-green text-fpl-purple" : "hover:bg-white/15"}`}
             >
               {l.label}
             </Link>

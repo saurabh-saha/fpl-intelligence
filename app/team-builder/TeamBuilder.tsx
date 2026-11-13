@@ -6,6 +6,8 @@ import { GameweekSelector } from "@/components/GameweekSelector";
 import { FootballPitch } from "@/components/FootballPitch";
 import { BudgetSummary } from "@/components/BudgetSummary";
 import { ControlsPanel } from "@/components/ControlsPanel";
+import { SeasonLongPanel } from "@/components/SeasonLongPanel";
+import { NewsPanel } from "@/components/NewsPanel";
 import { PlayerPanel } from "@/components/AlternativeSelector";
 import { ShareModal } from "@/components/ShareModal";
 import { Countdown } from "@/components/Countdown";
@@ -19,6 +21,8 @@ export function TeamBuilder() {
   const sp = useSearchParams();
   const [meta, setMeta] = useState<Meta | null>(null);
   const [prefs, setPrefs] = useState<Prefs>({ mode: (sp.get("mode") as Mode) || "balanced" });
+  const [seasonLong, setSeasonLong] = useState(sp.get("strategy") === "season-long");
+  const [horizonEnd, setHorizonEnd] = useState(38);
   const [squad, setSquad] = useState<SquadResp | null>(null);
   const [original, setOriginal] = useState<SquadResp | null>(null);
   const [undo, setUndo] = useState<SquadResp[]>([]);
@@ -36,12 +40,14 @@ export function TeamBuilder() {
 
   const gw = Number(sp.get("gw")) || meta?.nextGw || 0;
 
-  const generate = useCallback(async (g: number, p: Prefs) => {
+  const generate = useCallback(async (g: number, p: Prefs, sl?: { on: boolean; end: number }) => {
     const id = ++req.current;
     setBusy(true);
     setError(null);
     try {
-      const s = await api<SquadResp>("/api/optimize", { gw: g, ...p });
+      const s = sl?.on
+        ? await api<SquadResp>("/api/strategies/season-long", { gw: g, budget: p.budget, formation: p.formation, maxOwnership: p.maxOwnership, horizonEnd: sl.end })
+        : await api<SquadResp>("/api/optimize", { gw: g, ...p });
       if (id !== req.current) return;
       setSquad(s);
       setOriginal(s);
@@ -56,13 +62,15 @@ export function TeamBuilder() {
 
   // Auto-generate when landing and whenever the gameweek or strategy changes.
   useEffect(() => {
-    if (gw) void generate(gw, prefs);
+    if (gw) void generate(gw, prefs, { on: seasonLong, end: Math.max(horizonEnd, gw) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gw, prefs.mode, generate]);
+  }, [gw, prefs.mode, seasonLong, generate]);
 
   const setGw = (g: number) => router.replace(`/team-builder?gw=${g}`);
   const info = meta?.events.find((e) => e.id === gw);
-  const evalPrefs = useMemo(() => ({ mode: prefs.mode, budget: prefs.budget }), [prefs.mode, prefs.budget]);
+  const lastGw = meta?.events[meta.events.length - 1]?.id ?? 38;
+  // Replacements and re-evaluation use the shared model; Season Long squads are edited the same way.
+  const evalPrefs = useMemo(() => ({ mode: seasonLong ? ("balanced" as Mode) : prefs.mode, budget: prefs.budget }), [prefs.mode, prefs.budget, seasonLong]);
 
   async function replace(outId: number, inId: number) {
     if (!squad) return;
@@ -87,7 +95,7 @@ export function TeamBuilder() {
 
   function save() {
     if (!squad) return;
-    const name = saveName.trim() || `GW${gw} ${prefs.mode} · ${squad.expectedPoints.toFixed(1)} pts`;
+    const name = saveName.trim() || `GW${gw} ${seasonLong ? "season-long" : prefs.mode} · ${squad.expectedPoints.toFixed(1)} pts`;
     saveSquad({ name, gw, mode: prefs.mode, ids: squad.squadIds, captain: squad.captain, vice: squad.viceCaptain, ep: squad.expectedPoints });
     setSaveName("");
     setToast(`Saved “${name}”`);
@@ -99,7 +107,7 @@ export function TeamBuilder() {
       <div className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-black text-fpl-purple" data-testid="title">
-            {info ? info.name : "Gameweek"} squad
+            {info ? info.name : "Gameweek"} squad{seasonLong && <span className="ml-2 rounded-full bg-fpl-purple px-2 py-0.5 align-middle text-xs font-extrabold text-white" data-testid="sl-badge">Season Long</span>}
             {info?.isNext && <span className="ml-2 rounded-full bg-fpl-green px-2 py-0.5 align-middle text-xs font-extrabold text-fpl-purple">NEXT</span>}
           </h1>
           {info && (
@@ -146,13 +154,17 @@ export function TeamBuilder() {
             </div>
             <DownloadReportButton
               gw={gw}
-              buildBody={() => squad && { kind: "builder", gw, mode: prefs.mode, budget: prefs.budget, maxOwnership: prefs.maxOwnership, differential: prefs.differential, starting: squad.starting.map((p) => p.id), bench: squad.bench.map((p) => p.id), captain: squad.captain, vice: squad.viceCaptain, originalIds: original?.squadIds }}
+              buildBody={() => squad && { kind: "builder", gw, mode: seasonLong ? "balanced" : prefs.mode, strategyLabel: seasonLong ? "season-long" : undefined, budget: prefs.budget, maxOwnership: prefs.maxOwnership, differential: prefs.differential, starting: squad.starting.map((p) => p.id), bench: squad.bench.map((p) => p.id), captain: squad.captain, vice: squad.viceCaptain, originalIds: original?.squadIds }}
             />
             <p className="text-[11px] text-slate-500">Click any player on the pitch to see why they were picked and swap them for a legal alternative.</p>
           </div>
-          <ControlsPanel prefs={prefs} onChange={setPrefs} onApply={() => gw && generate(gw, prefs)} busy={busy} />
+          <ControlsPanel prefs={prefs} onChange={setPrefs} onApply={() => gw && generate(gw, prefs, { on: seasonLong, end: Math.max(horizonEnd, gw) })} busy={busy} seasonLong={{ active: seasonLong, onSelect: setSeasonLong, from: gw || 1, last: lastGw, horizonEnd: Math.max(horizonEnd, gw || 1), onHorizonEnd: setHorizonEnd }} />
         </div>
       </div>
+
+      {squad && <NewsPanel ids={squad.squadIds} gw={gw} />}
+
+      {seasonLong && squad && <SeasonLongPanel squad={squad} gw={gw} horizonEnd={Math.max(horizonEnd, gw)} />}
 
       {selected && squad && (
         <PlayerPanel

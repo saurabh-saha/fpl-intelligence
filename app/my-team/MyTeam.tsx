@@ -3,7 +3,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, fmtGbp, signed, type Meta, type PlayerView } from "@/lib/client";
 import type { ChipsResp, EvalResp, TransfersResp } from "@/lib/seasonClient";
 import { editPlan } from "@/lib/season/squad";
+import { NewsPanel } from "@/components/NewsPanel";
 import { clearSeason, loadSeason, saveSeason, withActuals } from "@/lib/season/store";
+import { commitLock, history, markResynced, undoableLock, undoLastLock, whyNotUndoable } from "@/lib/season/lockHistory";
 import type { GwPlan, RecEntry, SeasonState, Snapshot } from "@/lib/season/types";
 import type { ChipName } from "@/lib/fpl/types";
 import type { TransferDetail, TransferOption } from "@/lib/season/transfers";
@@ -39,6 +41,8 @@ export function MyTeam() {
   const [err, setErr] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [notes, setNotes] = useState<string[]>([]);
+  // Transfer horizon: the next five gameweeks (default) or the rest of the season (Season Long strategy).
+  const [horizon, setHorizon] = useState<"five" | "season">("five");
   const seq = useRef(0);
   const seqAnalysis = useRef(0);
 
@@ -72,8 +76,8 @@ export function MyTeam() {
   const analysisKey = useMemo(() => {
     if (!state) return "";
     const earlier = Object.fromEntries(Object.entries(state.plans).filter(([g]) => Number(g) < gw));
-    return JSON.stringify([state.actual, earlier, gw]);
-  }, [state, gw]);
+    return JSON.stringify([state.actual, earlier, gw, horizon]);
+  }, [state, gw, horizon]);
   useEffect(() => {
     if (!state || !gw) return;
     setTr(null);
@@ -81,7 +85,7 @@ export function MyTeam() {
     setRejected(new Set());
     const id = ++seqAnalysis.current;
     const b = { season: { source: state.source, actual: state.actual, plans: state.plans }, gw };
-    api<TransfersResp>("/api/season/transfers", b).then((r) => id === seqAnalysis.current && setTr(r)).catch((e) => setErr(e.message));
+    api<TransfersResp>(horizon === "season" ? "/api/strategies/season-long/transfers" : "/api/season/transfers", b).then((r) => id === seqAnalysis.current && setTr(r)).catch((e) => setErr(e.message));
     api<ChipsResp>("/api/season/chips", b).then((r) => id === seqAnalysis.current && setChips(r)).catch(() => null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [analysisKey]);
@@ -186,20 +190,35 @@ export function MyTeam() {
 
   async function lockIn() {
     if (!state || !ev) return;
-    if (!confirm(`Lock in GW${gw}? This records your plan as what you actually did and advances to GW${gw + 1}. Do this after you have made the moves on the FPL site.`)) return;
+    if (!confirm(`Lock in GW${gw} inside FPL Intelligence?\n\n• This records your current proposed plan as your actual squad here and advances to GW${gw + 1}.\n• It does NOT make any transfers on the official FPL website. Make those moves there yourself, before the deadline.\n• If you click this by mistake, use "Undo last Lock in" to reverse it inside FPL Intelligence.`)) return;
     setBusy(true);
-    try {
-      const r = await api<{ newActual: SeasonState["actual"]; snapshot: Snapshot }>("/api/season/commit", body());
-      setState((s) => {
-        if (!s) return s;
-        const plans = { ...s.plans };
-        delete plans[gw];
-        return withActuals({ ...s, actual: r.newActual, plans, snapshots: [...s.snapshots.filter((x) => x.gw !== gw), r.snapshot].sort((a, b) => a.gw - b.gw) });
-      });
-      setGw(r.newActual.gw);
+    const r = await commitLock(state, gw, () => api<{ newActual: SeasonState["actual"]; snapshot: Snapshot }>("/api/season/commit", body()));
+    if (r.error) setErr(r.error);
+    else {
+      setState(withActuals(r.state));
+      setGw(r.state.actual.gw);
       setUndo([]);
-      say(`GW${gw} locked in. Now planning GW${r.newActual.gw}`);
-    } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
+      say(`GW${gw} locked in. Now planning GW${r.state.actual.gw}`);
+    }
+    setBusy(false);
+  }
+
+  function undoLock() {
+    if (!state) return;
+    const rec = undoableLock(state);
+    if (!rec) return;
+    if (!confirm(`Undo the lock-in of GW${rec.gw}?\n\nThis restores your squad, plans and history in FPL Intelligence to how they were before you locked in GW${rec.gw}, and returns to GW${rec.prev.actual.gw}. It does not change your official FPL team.`)) return;
+    const restored = undoLastLock(state);
+    if (!restored) return;
+    seq.current++; seqAnalysis.current++; // drop any in-flight analysis for the old state
+    setState(withActuals(restored));
+    setGw(restored.actual.gw);
+    setUndo([]);
+    setRejected(new Set());
+    setEv(null);
+    setTr(null);
+    setChips(null);
+    say(`GW${rec.gw} lock-in undone. Back to planning GW${restored.actual.gw}`);
   }
 
   async function resync() {
@@ -207,7 +226,7 @@ export function MyTeam() {
     if (!confirm("Re-import your team from FPL? Your actual squad is replaced with the real one and unsaved plans are cleared. History is kept.")) return;
     try {
       const r = await api<{ state: SeasonState }>(`/api/import/${state.teamId}`);
-      setState(withActuals({ ...r.state, snapshots: state.snapshots, recs: state.recs }));
+      setState(withActuals({ ...r.state, snapshots: state.snapshots, recs: state.recs, lockHistory: markResynced(state.lockHistory) }));
       setGw(r.state.actual.gw);
       setUndo([]);
       say("Re-synced from FPL");
@@ -275,11 +294,22 @@ export function MyTeam() {
           {ev && !ev.plan.valid && <div className="rounded-xl bg-rose-50 p-3 text-xs text-rose-700" data-testid="plan-errors">{ev.plan.errors.map((e, i) => <p key={i}>⚠ {e}</p>)}</div>}
           <div className="card space-y-2 p-4">
             <div className="flex flex-wrap gap-2">
-              <button onClick={doUndo} disabled={undo.length === 0} className="rounded-full bg-fpl-bg px-3 py-1.5 text-xs font-bold text-fpl-purple disabled:opacity-40" data-testid="mt-undo">↶ Undo</button>
-              <button onClick={restore} disabled={planIsEmpty(plan)} className="rounded-full bg-fpl-bg px-3 py-1.5 text-xs font-bold text-fpl-purple disabled:opacity-40" data-testid="mt-restore">Restore original squad</button>
+              <button onClick={doUndo} disabled={undo.length === 0} title={undo.length === 0 ? "Make a squad edit to enable Undo." : "Undo your last squad edit"} className="rounded-full bg-fpl-bg px-3 py-1.5 text-xs font-bold text-fpl-purple disabled:opacity-40" data-testid="mt-undo">↶ Undo</button>
+              <button onClick={restore} disabled={planIsEmpty(plan)} title={planIsEmpty(plan) ? "No proposed changes to restore." : "Discard this gameweek's proposed changes"} className="rounded-full bg-fpl-bg px-3 py-1.5 text-xs font-bold text-fpl-purple disabled:opacity-40" data-testid="mt-restore">Restore original squad</button>
               <button onClick={() => setSharing(true)} disabled={!ev} className="rounded-full bg-fpl-purple px-3 py-1.5 text-xs font-bold text-white disabled:opacity-40" data-testid="mt-share">Share plan</button>
             </div>
             <button onClick={lockIn} disabled={!canLock || busy} className="w-full rounded-xl bg-fpl-green py-2 text-sm font-extrabold text-fpl-purple disabled:opacity-40" data-testid="lock-in" title={gw !== state.actual.gw ? "Only the current gameweek can be locked in" : ""}>Lock in GW{gw} &amp; advance →</button>
+            <div className="space-y-1" data-testid="lock-history">
+              <button onClick={undoLock} disabled={!undoableLock(state) || busy} title={undoableLock(state) ? `Reverse the GW${undoableLock(state)!.gw} lock-in (local to FPL Intelligence)` : whyNotUndoable(state)} className="w-full rounded-xl border border-fpl-purple/20 bg-white py-1.5 text-xs font-bold text-fpl-purple disabled:opacity-40" data-testid="undo-lock">↶ Undo last Lock in{undoableLock(state) ? ` (GW${undoableLock(state)!.gw})` : ""}</button>
+              {!undoableLock(state) && <p className="text-[11px] text-slate-500" data-testid="undo-lock-why">{whyNotUndoable(state)}</p>}
+              {history(state).length > 0 && (
+                <ul className="space-y-0.5 text-[11px] text-slate-600" data-testid="lock-history-list">
+                  {history(state).map((r, i) => (
+                    <li key={r.lockedAt + r.gw} className="flex justify-between gap-2"><span>GW{r.gw} locked in · {new Date(r.lockedAt).toLocaleString()}</span><span className={i === 0 && !r.stale && undoableLock(state) ? "font-bold text-fpl-purple" : "text-slate-400"}>{i === 0 && undoableLock(state) ? "can undo" : r.stale ? "re-synced" : "not undoable"}</span></li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <DownloadReportButton
               gw={gw}
               buildBody={() => ev && { kind: "my-team", ...body(), starting: ev.proposed.starting.map((p) => p.id), bench: ev.proposed.bench.map((p) => p.id), captain: ev.proposed.captain, vice: ev.proposed.viceCaptain, teamName: state.teamName, ftDerived }}
@@ -293,6 +323,11 @@ export function MyTeam() {
       <div className="card space-y-3 p-4" data-testid="transfer-recs">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 className="font-extrabold text-fpl-purple">Transfer recommendations <Tag kind="model" /></h2>
+          <div className="flex gap-1" role="group" aria-label="Transfer horizon">
+            {([["five", "Next 5 gameweeks"], ["season", "Remaining season"]] as const).map(([k, label]) => (
+              <button key={k} onClick={() => setHorizon(k)} data-testid={`horizon-${k}`} aria-pressed={horizon === k} className={`rounded-full px-3 py-1 text-xs font-bold ${horizon === k ? "bg-fpl-purple text-white" : "bg-fpl-bg text-fpl-purple"}`}>{label}</button>
+            ))}
+          </div>
           {tr && <span className="text-xs text-slate-500">{tr.freeTransfers} free transfer(s) · bank {fmtGbp(tr.bankTenths / 10)} · judged over GW{tr.horizonGws[0]}–GW{tr.horizonGws[tr.horizonGws.length - 1]} · sell prices used</span>}
         </div>
         {!tr && <p className="p-6 text-center text-sm text-slate-500">Analysing every legal swap…</p>}
@@ -308,14 +343,14 @@ export function MyTeam() {
                 <div className="flex items-center justify-between"><h3 className="text-sm font-bold text-slate-600">Recommended moves</h3>
                   <button onClick={() => { applyOption(recommended); }} className="rounded-full bg-fpl-purple px-3 py-1 text-xs font-bold text-white" data-testid="accept-all">Accept all</button></div>
                 {recommended.transfers.map((t) => (
-                  <TransferCard key={tkey(t)} t={t} players={tr.players} state={stateOf(t)} onAccept={() => accept(t)} onReject={() => { setRejected((r) => new Set(r).add(tkey(t))); markRec("rejected"); }} onUndo={() => (acceptedKeys.has(tkey(t)) ? unaccept(t) : setRejected((r) => { const n = new Set(r); n.delete(tkey(t)); return n; }))} />
+                  <TransferCard key={tkey(t)} horizonLabel={horizon === "season" ? "Rest of season (disc.)" : "Next 5 GWs"} t={t} players={tr.players} state={stateOf(t)} onAccept={() => accept(t)} onReject={() => { setRejected((r) => new Set(r).add(tkey(t))); markRec("rejected"); }} onUndo={() => (acceptedKeys.has(tkey(t)) ? unaccept(t) : setRejected((r) => { const n = new Set(r); n.delete(tkey(t)); return n; }))} />
                 ))}
               </div>
             )}
             <div>
               <h3 className="mb-1 text-sm font-bold text-slate-600">Save vs transfer: all options compared</h3>
-              <OptionsTable options={tr.options} recommendedN={tr.recommendedN} onApply={applyOption} appliedKey={[...acceptedKeys].sort().join("|")} />
-              <p className="mt-1 text-[11px] text-slate-500">Net = discounted 5-gameweek expected-point gain minus −4 per extra transfer. “Best” also credits free transfers left banked.</p>
+              <OptionsTable horizonLabel={horizon === "season" ? "Season gain (disc.)" : "5-GW gain"} options={tr.options} recommendedN={tr.recommendedN} onApply={applyOption} appliedKey={[...acceptedKeys].sort().join("|")} />
+              <p className="mt-1 text-[11px] text-slate-500">{horizon === "season" ? "Net = discounted remaining-season expected-point gain (7% per gameweek) minus −4 per extra transfer; “Best” also credits free transfers left banked, up to the cap of 5. The raw column is the undiscounted gain." : "Net = discounted 5-gameweek expected-point gain minus −4 per extra transfer. “Best” also credits free transfers left banked."}</p>
             </div>
             <details>
               <summary className="cursor-pointer text-sm font-bold text-fpl-purple">Every player: up to five alternatives</summary>
@@ -342,6 +377,7 @@ export function MyTeam() {
       </div>
 
       <ChipPanel data={chips} gw={gw} planChip={plan.chip ?? null} busy={busy} onPlay={play} onCancel={cancelChip} />
+      <NewsPanel ids={state.actual.holdings.map((h) => h.id)} gw={gw} />
       <HistoryPanel state={state} onActual={(g, pts) => setState((s) => s && { ...s, snapshots: s.snapshots.map((x) => (x.gw === g ? { ...x, actualPoints: pts } : x)) })} />
       <TeamSettings state={state} meta={meta} onChange={setState} onReset={() => { clearSeason(); setState(null); setEv(null); setTr(null); }} onResync={state.teamId ? resync : undefined} />
 
