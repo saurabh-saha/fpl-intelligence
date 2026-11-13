@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { FeedEvent } from "@/lib/news/feed";
 import { NewsEventCard } from "./NewsEventCard";
 
-interface Resp { freshness: { label: "live" | "stale" | "never"; lastSuccessAt: string | null; minutesSinceSuccess: number | null }; events: FeedEvent[]; disabled?: boolean }
+interface Resp { counts: { totalTracked: number }; freshness: { label: "live" | "stale" | "never"; lastSuccessAt: string | null; minutesSinceSuccess: number | null }; events: FeedEvent[]; disabled?: boolean }
 
 /** Compact "news affecting this squad" panel for Team Builder and My Team. */
 export function NewsPanel({ ids, gw }: { ids: number[]; gw: number }) {
@@ -28,7 +28,10 @@ export function NewsPanel({ ids, gw }: { ids: number[]; gw: number }) {
         </span>
       </div>
       {shown.length === 0 ? (
-        <p className="mt-2 text-sm text-slate-600">No injury, suspension or availability news for these players. Projections are unchanged.</p>
+        <p className="mt-2 text-sm text-slate-600" data-testid="news-empty-note">
+          Checked these {ids.length} players against {r.counts.totalTracked} tracked news events{r.freshness.minutesSinceSuccess !== null ? ` (updated ${r.freshness.minutesSinceSuccess} min ago)` : ""}. None is injured, suspended or flagged, so projections are unchanged.{" "}
+          <a className="font-semibold text-fpl-purple underline" href="/news">See all news</a>
+        </p>
       ) : (
         <>
           <p className="mt-1 text-xs text-slate-500">{changing.length} player{changing.length === 1 ? "" : "s"} with news-adjusted projections (availability and minutes only; the xPts formula is unchanged).</p>

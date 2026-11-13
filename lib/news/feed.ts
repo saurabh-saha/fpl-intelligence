@@ -49,7 +49,7 @@ export function buildFeed(ds: Dataset, state: NewsState, gw: number, now = new D
     gw,
     freshness: freshness(state, ds, now),
     sources: SOURCES.map((s) => ({ ...s, status: state.sourceStatus[s.id] ?? null })),
-    counts: { events: events.length, changingProjections: events.filter((e) => e.impact).length, review: review.length },
+    counts: { totalTracked: overlay?.events.length ?? 0, events: events.length, changingProjections: events.filter((e) => e.impact).length, review: review.length },
     events,
     review,
   };
