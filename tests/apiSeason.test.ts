@@ -198,6 +198,26 @@ describe("FPL team import (public endpoints only)", () => {
     expect((await GET(new Request("http://x"), { params: Promise.resolve({ teamId: "abc" }) })).status).toBe(400);
   });
 
+  it("a team that has not reached its first deadline gets a clear explanation, not a generic 'private' error", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      const u = String(url);
+      const json = (o: unknown, status = 200) => new Response(JSON.stringify(o), { status });
+      if (/entry\/888\/$/.test(u)) return json({ id: 888, name: "Fresh FC", started_event: 11, current_event: 10, player_first_name: "A", player_last_name: "B" });
+      if (/entry\/888\/history\/$/.test(u)) return json({ current: [], past: [], chips: [] });
+      if (/entry\/888\/transfers\/$/.test(u)) return json([]);
+      return json({ detail: "Not found." }, 404);
+    }));
+    const { GET } = await import("@/app/api/import/[teamId]/route");
+    const res = await GET(new Request("http://x"), { params: Promise.resolve({ teamId: "888" }) });
+    const body = await res.json();
+    expect(res.status).toBe(404);
+    expect(body.error).toContain("Fresh FC");
+    expect(body.error).toContain("Gameweek 11");
+    expect(body.error).toMatch(/deadline/);
+    expect(body.error).toContain("Start from recommended squad");
+    expect(body.error).not.toMatch(/may be private/);
+  });
+
   it("never asks for credentials", async () => {
     mockFpl();
     const spy = globalThis.fetch as any;

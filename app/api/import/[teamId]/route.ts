@@ -44,7 +44,18 @@ export async function GET(_req: Request, { params }: { params: Promise<{ teamId:
 
     // Opening squad with prices
     const firstPicks = await getJson(`${BASE}/entry/${id}/event/${started}/picks/`);
-    if (!firstPicks?.picks) throw new HttpError(404, "This team's picks are not available (the team may be private or the season has not started).");
+    if (!firstPicks?.picks) {
+      // FPL publishes a squad only after the deadline of the gameweek it was picked for, so a brand-new team has nothing to read yet.
+      if (started > currentEvent) {
+        const dl = ds.events.find((e) => e.id === started)?.deadline;
+        const when = dl ? ` (${new Date(dl).toUTCString().replace(":00 GMT", " UTC")})` : "";
+        throw new HttpError(
+          404,
+          `"${entry.name}" joined for Gameweek ${started} and has no squad that can be read yet: FPL publishes a squad only after that gameweek's deadline${when}. Import again after the deadline, or use "Start from recommended squad" now and enter your bank and free transfers under Team settings.`,
+        );
+      }
+      throw new HttpError(404, "This team's picks are not available (the team may be private).");
+    }
     const initial = [];
     const replay = reconstructHoldings(firstPicks.picks.map((p: any) => ({ id: p.element, buyTenths: 0 })), transfers, fhEvents);
     const stillInitial = new Set(firstPicks.picks.map((p: any) => p.element).filter((e: number) => replay.some((h) => h.id === e)));
